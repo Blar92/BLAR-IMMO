@@ -704,20 +704,41 @@ footer{background:var(--navy-deep);color:#fff;padding:70px 8vw 36px}
   <div class="ct-body">
     <div>
       <div class="cf-title">Envoyez-nous un message</div>
-      <div class="cf-row">
-        <div class="cf-grp"><label class="cf-lbl">Prénom *</label><input type="text" class="cf-inp" placeholder="Baptiste"></div>
-        <div class="cf-grp"><label class="cf-lbl">Nom *</label><input type="text" class="cf-inp" placeholder="Dupont"></div>
-      </div>
-      <div class="cf-grp"><label class="cf-lbl">Email *</label><input type="email" class="cf-inp" placeholder="votre@email.fr"></div>
-      <div class="cf-grp"><label class="cf-lbl">Téléphone</label><input type="tel" class="cf-inp" placeholder="06 XX XX XX XX"></div>
-      <div class="cf-grp"><label class="cf-lbl">Adresse du bien (si applicable)</label><input type="text" class="cf-inp" placeholder="Ex : 12 rue de la Paix, 75001 Paris"></div>
-      <div class="cf-grp"><label class="cf-lbl">Message *</label><textarea class="cf-ta" placeholder="Décrivez votre projet ou votre besoin..."></textarea></div>
-      <div class="cf-check">
-        <input type="checkbox" id="rgpd">
-        <label for="rgpd">J'accepte que mes données soient utilisées pour traiter ma demande conformément à la <a href="#" onclick="show('privacy');return false;">politique de confidentialité</a> de BLAR IMMO.</label>
-      </div>
-      <button class="btn-navy" onclick="submitForm(this)"><span>Envoyer ma demande</span><span>→</span></button>
-      <div id="form-ok" style="display:none;margin-top:1.2rem;padding:1rem 1.2rem;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);border-radius:4px;color:#166534;font-size:.9rem;">✅ Message envoyé ! Nous vous répondons sous 48h ouvrées.</div>
+      <form id="contact-form" action="https://formspree.io/f/mvzypeaj" method="POST">
+        <div class="cf-row">
+          <div class="cf-grp">
+            <label class="cf-lbl">Prénom *</label>
+            <input type="text" name="prenom" class="cf-inp" placeholder="Baptiste" required>
+          </div>
+          <div class="cf-grp">
+            <label class="cf-lbl">Nom *</label>
+            <input type="text" name="nom" class="cf-inp" placeholder="Dupont" required>
+          </div>
+        </div>
+        <div class="cf-grp">
+          <label class="cf-lbl">Email *</label>
+          <input type="email" name="email" class="cf-inp" placeholder="votre@email.fr" required>
+        </div>
+        <div class="cf-grp">
+          <label class="cf-lbl">Téléphone</label>
+          <input type="tel" name="telephone" class="cf-inp" placeholder="06 XX XX XX XX">
+        </div>
+        <div class="cf-grp">
+          <label class="cf-lbl">Adresse du bien (si applicable)</label>
+          <input type="text" name="adresse_bien" class="cf-inp" placeholder="Ex : 12 rue de la Paix, 75001 Paris">
+        </div>
+        <div class="cf-grp">
+          <label class="cf-lbl">Message *</label>
+          <textarea name="message" class="cf-ta" placeholder="Décrivez votre projet ou votre besoin..." required></textarea>
+        </div>
+        <div class="cf-check">
+          <input type="checkbox" id="rgpd" required>
+          <label for="rgpd">J'accepte que mes données soient utilisées pour traiter ma demande conformément à la <a href="#" onclick="show('privacy');return false;">politique de confidentialité</a> de BLAR IMMO.</label>
+        </div>
+        <button type="submit" class="btn-navy" id="submit-btn"><span>Envoyer ma demande</span><span>→</span></button>
+        <div id="form-ok" style="display:none;margin-top:1.2rem;padding:1rem 1.2rem;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);border-radius:4px;color:#166534;font-size:.9rem;">✅ Message envoyé ! Nous vous répondons sous 48h ouvrées.</div>
+        <div id="form-err" style="display:none;margin-top:1.2rem;padding:1rem 1.2rem;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:4px;color:#991b1b;font-size:.9rem;">❌ Une erreur est survenue. Réessayez ou contactez-nous par email.</div>
+      </form>
     </div>
     <div>
       <div class="ci-card">
@@ -1105,15 +1126,38 @@ function initReveal(){
 }
 initReveal();
 
-// FORM
-function submitForm(btn){
-  btn.disabled=true;
-  btn.querySelector('span').textContent='Envoi en cours…';
-  setTimeout(()=>{
-    document.getElementById('form-ok').style.display='block';
-    btn.querySelector('span').textContent='Envoyé ✓';
-    btn.style.background='#166534';
-  },1200);
+// FORM FORMSPREE
+const form = document.getElementById('contact-form');
+if(form){
+  form.addEventListener('submit', async function(e){
+    e.preventDefault();
+    const btn = document.getElementById('submit-btn');
+    const ok = document.getElementById('form-ok');
+    const err = document.getElementById('form-err');
+    btn.disabled = true;
+    btn.querySelector('span').textContent = 'Envoi en cours…';
+    try {
+      const res = await fetch('https://formspree.io/f/mvzypeaj', {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { 'Accept': 'application/json' }
+      });
+      if(res.ok){
+        ok.style.display = 'block';
+        err.style.display = 'none';
+        btn.querySelector('span').textContent = 'Envoyé ✓';
+        btn.style.background = '#166534';
+        form.reset();
+      } else {
+        throw new Error('Erreur serveur');
+      }
+    } catch(e){
+      err.style.display = 'block';
+      ok.style.display = 'none';
+      btn.disabled = false;
+      btn.querySelector('span').textContent = 'Envoyer ma demande';
+    }
+  });
 }
 </script>
 </body>
