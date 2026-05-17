@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BLAR IMMO — Des biens optimisés, un avenir stabilisé</title>
+<meta name="description" content="BLAR IMMO, agence immobilière 100% en ligne à Courbevoie. Gestion locative, conseil patrimonial et investissement immobilier en Île-de-France.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0B1E3D;--navy-deep:#07122A;--accent:#1D4ED8;--accent-b:#3B82F6;
+  --white:#fff;--off:#F6F8FC;--gray:#E4EAF4;--gtxt:#7B90B5;
+  --fh:'Syne',sans-serif;--fb:'DM Sans',sans-serif;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--fb);background:var(--white);color:var(--navy);overflow-x:hidden;cursor:none}
+
+/* CURSOR */
+#cur,#curR{position:fixed;top:0;left:0;pointer-events:none;z-index:9999;transform:translate(-50%,-50%)}
+#cur{width:10px;height:10px;background:var(--accent);border-radius:50%;transition:transform .15s,background .3s}
+#curR{width:34px;height:34px;border:1.5px solid var(--accent);border-radius:50%;z-index:9998;opacity:.5;transition:transform .2s cubic-bezier(.25,.8,.25,1)}
+
+/* NAV */
+#nav{
+  position:fixed;top:0;left:0;right:0;z-index:500;
+  height:80px;padding:0 5vw;
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(255,255,255,.95);backdrop-filter:blur(22px);
+  border-bottom:1px solid rgba(11,30,61,.08);
+  transition:height .4s,box-shadow .4s;
+}
+#nav.scrolled{height:64px;box-shadow:0 4px 40px rgba(11,30,61,.09)}
+.n-logo img{height:52px;width:auto;transition:height .4s;display:block}
+#nav.scrolled .n-logo img{height:40px}
+.n-links{display:flex;gap:2.2rem;align-items:center;list-style:none}
+.n-links a{font-family:var(--fb);font-size:.875rem;font-weight:500;color:var(--navy);text-decoration:none;position:relative;transition:color .25s;letter-spacing:.02em}
+.n-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1.5px;background:var(--accent);transition:width .3s}
+.n-links a:hover::after{width:100%}
+.n-links a:hover{color:var(--accent)}
+.n-cta{background:var(--navy)!important;color:#fff!important;padding:10px 22px!important;border-radius:4px!important;transition:background .3s,transform .2s!important}
+.n-cta:hover{background:var(--accent)!important;transform:translateY(-1px)!important}
+.n-cta::after{display:none!important}
+.burger{display:none;font-size:1.5rem;cursor:none;color:var(--navy);background:none;border:none}
+.mobile-menu{
+  display:none;position:fixed;top:80px;left:0;right:0;
+  background:#fff;flex-direction:column;padding:1.5rem 5vw;
+  border-bottom:1px solid rgba(11,30,61,.08);
+  box-shadow:0 10px 40px rgba(11,30,61,.1);z-index:499;
+}
+.mobile-menu.open{display:flex}
+.mobile-menu a{font-family:var(--fb);font-size:1rem;font-weight:500;color:var(--navy);text-decoration:none;padding:1rem 0;border-bottom:1px solid var(--gray);transition:color .2s}
+.mobile-menu a:last-child{border-bottom:none;color:var(--accent)}
+.mobile-menu a:hover{color:var(--accent)}
+
+/* PAGES */
+.page{display:none}.page.active{display:block}
+
+/* HERO */
+.hero{
+  min-height:100vh;padding-top:80px;
+  display:flex;flex-direction:column;
+  position:relative;overflow:hidden;
+}
+.hero-bg{
+  position:absolute;inset:0;
+  background:url('https://images.pexels.com/photos/338515/pexels-photo-338515.jpeg?auto=compress&cs=tinysrgb&w=1600') center/cover no-repeat;
+  animation:kb 18s ease-in-out infinite alternate;
+}
+@keyframes kb{from{transform:scale(1.04)}to{transform:scale(1.1) translateX(-20px)}}
+.hero-ov{position:absolute;inset:0;background:linear-gradient(160deg,rgba(11,30,61,.88) 0%,rgba(11,30,61,.55) 60%,rgba(11,30,61,.3) 100%)}
+.hero-grid{
+  position:absolute;inset:0;
+  background-image:linear-gradient(rgba(59,130,246,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(59,130,246,.05) 1px,transparent 1px);
+  background-size:55px 55px;animation:gmove 22s linear infinite;
+}
+@keyframes gmove{to{transform:translateY(55px)}}
+.hero-orb{position:absolute;border-radius:50%;filter:blur(80px);pointer-events:none}
+.hero-orb-1{width:500px;height:500px;background:radial-gradient(circle,rgba(37,99,235,.2) 0%,transparent 70%);top:-100px;right:5%;animation:ofloat 9s ease-in-out infinite}
+.hero-orb-2{width:350px;height:350px;background:radial-gradient(circle,rgba(201,168,76,.12) 0%,transparent 70%);bottom:150px;left:5%;animation:ofloat 7s ease-in-out -3s infinite}
+@keyframes ofloat{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-25px) scale(1.04)}}
+
+.hero-content{position:relative;z-index:2;flex:1;display:flex;flex-direction:column;justify-content:center;padding:60px 8vw 80px;max-width:900px}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.3);border-radius:100px;padding:6px 16px;font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-b);width:fit-content;margin-bottom:1.8rem;opacity:0;animation:fu .8s ease .2s forwards}
+.bdot{width:5px;height:5px;background:var(--accent-b);border-radius:50%;animation:pulse 1.5s infinite;display:inline-block}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.6);opacity:.5}}
+.hero-title{font-family:var(--fh);font-size:clamp(2.8rem,5.5vw,5rem);font-weight:800;color:#fff;line-height:1.04;letter-spacing:-.04em;margin-bottom:1.4rem;opacity:0;animation:fu .9s ease .4s forwards}
+.hero-title .hi{color:var(--accent-b);position:relative;display:inline-block}
+.hero-title .hi::after{content:'';position:absolute;bottom:4px;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent-b),transparent);border-radius:2px}
+.hero-sub{font-size:1.05rem;font-weight:300;color:rgba(255,255,255,.75);line-height:1.75;max-width:580px;margin-bottom:2.5rem;opacity:0;animation:fu .9s ease .6s forwards}
+.hero-btns{display:flex;gap:1rem;flex-wrap:wrap;opacity:0;animation:fu .9s ease .8s forwards}
+.btn-w{background:#fff;color:var(--navy);padding:13px 28px;border-radius:4px;font-family:var(--fb);font-size:.9rem;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:all .3s;position:relative;overflow:hidden}
+.btn-w::before{content:'';position:absolute;inset:0;background:var(--accent);transform:translateX(-100%);transition:transform .4s}
+.btn-w span{position:relative;z-index:1}
+.btn-w:hover::before{transform:translateX(0)}
+.btn-w:hover{color:#fff;transform:translateY(-2px);box-shadow:0 12px 30px rgba(29,78,216,.35)}
+.btn-o{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.4);padding:13px 28px;border-radius:4px;font-family:var(--fb);font-size:.9rem;font-weight:500;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:all .3s}
+.btn-o:hover{border-color:#fff;background:rgba(255,255,255,.1);transform:translateY(-2px)}
+
+.stats-bar{position:relative;z-index:2;display:flex;background:rgba(7,18,42,.75);backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,.1)}
+.stat{flex:1;padding:26px 3vw;border-right:1px solid rgba(255,255,255,.1);opacity:0;animation:fu .8s ease forwards}
+.stat:nth-child(1){animation-delay:1s}.stat:nth-child(2){animation-delay:1.1s}.stat:nth-child(3){animation-delay:1.2s}.stat:nth-child(4){animation-delay:1.3s}
+.stat:last-child{border-right:none}
+.snum{font-family:var(--fh);font-size:2rem;font-weight:800;color:#fff;letter-spacing:-.04em;line-height:1}
+.snum em{color:var(--accent-b);font-style:normal}
+.slbl{font-size:.7rem;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.1em;margin-top:5px}
+
+@keyframes fu{to{opacity:1;transform:none}}
+
+/* TICKER */
+.ticker{background:var(--navy);padding:13px 0;overflow:hidden}
+.ttrack{display:flex;animation:tick 28s linear infinite;white-space:nowrap}
+.titem{font-size:.75rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;padding:0 2.5rem;color:rgba(255,255,255,.7);display:flex;align-items:center;gap:1rem}
+.tsep{color:var(--accent-b)}
+@keyframes tick{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* SECTIONS */
+.sw{padding:110px 8vw}
+.slabel{font-size:.7rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);margin-bottom:.9rem;display:flex;align-items:center;gap:10px}
+.slabel::before{content:'';width:28px;height:1.5px;background:var(--accent);display:block}
+.stitle{font-family:var(--fh);font-size:clamp(1.8rem,3.2vw,2.8rem);font-weight:800;letter-spacing:-.035em;line-height:1.08;color:var(--navy);margin-bottom:1.2rem}
+.ssub{font-size:1rem;font-weight:300;color:#4A5E7A;line-height:1.75;max-width:560px}
+
+/* REVEAL */
+.rv{opacity:0;transform:translateY(36px);transition:opacity .7s ease,transform .7s ease}
+.rv.vis{opacity:1;transform:none}
+
+/* EXPERTISES */
+.exp-intro{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:end;margin-bottom:4rem}
+.exp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:rgba(11,30,61,.08)}
+.exp-card{background:#fff;padding:2.8rem 2.2rem;position:relative;overflow:hidden;transition:transform .4s,box-shadow .4s;cursor:none}
+.exp-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--navy));transform:scaleX(0);transform-origin:left;transition:transform .45s}
+.exp-card:hover::after{transform:scaleX(1)}
+.exp-card:hover{transform:translateY(-5px);box-shadow:0 24px 60px rgba(11,30,61,.1)}
+.exp-n{font-family:var(--fh);font-size:4.5rem;font-weight:800;color:rgba(29,78,216,.07);letter-spacing:-.06em;line-height:1;margin-bottom:1rem;transition:color .4s}
+.exp-card:hover .exp-n{color:rgba(29,78,216,.13)}
+.exp-ico{width:46px;height:46px;border-radius:8px;background:rgba(29,78,216,.09);display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin-bottom:1.2rem;transition:background .3s,transform .3s}
+.exp-card:hover .exp-ico{background:var(--accent);transform:rotate(-6deg)}
+.exp-name{font-family:var(--fh);font-size:1.1rem;font-weight:700;color:var(--navy);margin-bottom:.8rem}
+.exp-list{list-style:none;padding:0}
+.exp-list li{font-size:.875rem;font-weight:300;color:#4A5E7A;padding:5px 0;border-bottom:1px solid var(--gray);display:flex;align-items:center;gap:8px}
+.exp-list li::before{content:'→';color:var(--accent);font-size:.75rem;flex-shrink:0}
+.exp-list li:last-child{border-bottom:none}
+.exp-lnk{margin-top:1.2rem;font-size:.8rem;font-weight:600;color:var(--accent);text-decoration:none;letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;gap:6px;transition:gap .3s}
+.exp-lnk:hover{gap:12px}
+
+/* WHY */
+.why-layout{display:grid;grid-template-columns:1fr 1fr;gap:8rem;align-items:center}
+.why-img-w{position:relative;height:560px}
+.why-img{width:100%;height:100%;object-fit:cover;border-radius:2px;display:block}
+.why-float{position:absolute;bottom:-20px;right:-20px;background:var(--navy);color:#fff;padding:20px 24px;border-radius:8px;box-shadow:0 16px 50px rgba(11,30,61,.35);animation:wfloat 5s ease-in-out infinite}
+@keyframes wfloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.wf-lbl{font-size:.68rem;opacity:.55;text-transform:uppercase;letter-spacing:.1em}
+.wf-val{font-family:var(--fh);font-size:2rem;font-weight:800;letter-spacing:-.04em;color:var(--accent-b);line-height:1;margin-top:3px}
+.wf-sub{font-size:.78rem;opacity:.55;margin-top:3px}
+.why-pts{margin-top:2rem}
+.why-pt{padding:1.5rem 0;border-bottom:1px solid var(--gray);display:flex;gap:1.2rem;align-items:flex-start;transition:padding-left .3s}
+.why-pt:first-child{padding-top:0;border-top:1px solid var(--gray)}
+.why-pt:hover{padding-left:8px}
+.wp-ico{width:40px;height:40px;min-width:40px;border-radius:6px;background:rgba(29,78,216,.08);display:flex;align-items:center;justify-content:center;font-size:1.1rem;transition:background .3s;margin-top:2px}
+.why-pt:hover .wp-ico{background:var(--accent)}
+.wp-title{font-family:var(--fh);font-size:.95rem;font-weight:700;color:var(--navy);margin-bottom:.3rem}
+.wp-txt{font-size:.85rem;font-weight:300;color:#4A5E7A;line-height:1.6}
+
+/* CTA BAND */
+.cta-band{background:var(--navy);padding:100px 8vw;display:grid;grid-template-columns:1fr auto;gap:4rem;align-items:center;position:relative;overflow:hidden}
+.cta-band::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 700px 400px at 85% 50%,rgba(29,78,216,.3),transparent)}
+.cb-title{font-family:var(--fh);font-size:clamp(2rem,3.5vw,3rem);font-weight:800;color:#fff;letter-spacing:-.04em;line-height:1.1;position:relative;z-index:1}
+.cb-title em{color:var(--accent-b);font-style:normal}
+.cb-right{position:relative;z-index:1;display:flex;flex-direction:column;gap:.8rem;align-items:flex-start}
+.cb-note{font-size:.75rem;color:rgba(255,255,255,.35)}
+.btn-cta{background:#fff;color:var(--navy);padding:13px 30px;border-radius:4px;font-family:var(--fb);font-size:.9rem;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:all .3s;cursor:none}
+.btn-cta:hover{background:var(--accent-b);color:#fff;transform:translateY(-2px);box-shadow:0 12px 30px rgba(59,130,246,.4)}
+
+/* SERVICES PAGE */
+.srv-hero{background:var(--navy);color:#fff;padding:160px 8vw 100px;position:relative;overflow:hidden}
+.srv-hero::before{content:'';position:absolute;inset:0;background:url('https://images.pexels.com/photos/1105766/pexels-photo-1105766.jpeg?auto=compress&cs=tinysrgb&w=1600') center/cover;opacity:.15}
+.srv-hero::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--navy) 0%,rgba(11,30,61,.6) 100%)}
+.srv-hi{position:relative;z-index:1}
+.srv-hlbl{font-size:.7rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--accent-b);margin-bottom:1rem;display:flex;align-items:center;gap:10px}
+.srv-hlbl::before{content:'';width:28px;height:1.5px;background:var(--accent-b)}
+.srv-htitle{font-family:var(--fh);font-size:clamp(2.2rem,4.5vw,3.8rem);font-weight:800;letter-spacing:-.04em;line-height:1.06;margin-bottom:1.2rem;max-width:700px}
+.srv-hsub{font-size:1rem;font-weight:300;color:rgba(255,255,255,.65);line-height:1.75;max-width:560px}
+.srv-block{padding:100px 8vw;border-bottom:1px solid var(--gray)}
+.srv-block:nth-child(even){background:var(--off)}
+.srv-bi{display:grid;grid-template-columns:1fr 1fr;gap:7rem;align-items:center}
+.srv-block:nth-child(even) .srv-bi{direction:rtl}
+.srv-block:nth-child(even) .srv-bi>*{direction:ltr}
+.srv-num{font-family:var(--fh);font-size:5rem;font-weight:800;color:rgba(29,78,216,.08);letter-spacing:-.06em;line-height:1;margin-bottom:.5rem}
+.srv-name{font-family:var(--fh);font-size:1.8rem;font-weight:800;color:var(--navy);letter-spacing:-.03em;margin-bottom:1rem}
+.srv-desc{font-size:.95rem;font-weight:300;color:#4A5E7A;line-height:1.75;margin-bottom:1.8rem}
+.srv-feats{list-style:none;display:flex;flex-direction:column;gap:.6rem;margin-bottom:2rem}
+.srv-feats li{font-size:.88rem;color:var(--navy);display:flex;align-items:center;gap:10px}
+.srv-feats li::before{content:'';width:6px;height:6px;background:var(--accent);border-radius:50%;min-width:6px}
+.srv-img{width:100%;height:420px;object-fit:cover;border-radius:2px;display:block}
+.btn-navy{background:var(--navy);color:#fff;padding:13px 28px;border-radius:4px;font-family:var(--fb);font-size:.9rem;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:all .3s;cursor:none;border:none;position:relative;overflow:hidden}
+.btn-navy::before{content:'';position:absolute;inset:0;background:var(--accent);transform:translateX(-100%);transition:transform .4s}
+.btn-navy span{position:relative;z-index:1}
+.btn-navy:hover::before{transform:translateX(0)}
+.btn-navy:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(29,78,216,.35)}
+
+/* CONTACT PAGE */
+.ct-hero{background:var(--navy);color:#fff;padding:160px 8vw 100px;position:relative;overflow:hidden}
+.ct-hero::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(59,130,246,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(59,130,246,.05) 1px,transparent 1px);background-size:50px 50px}
+.ct-hero::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 600px 500px at 90% 60%,rgba(29,78,216,.25),transparent)}
+.ct-hi{position:relative;z-index:1;max-width:680px}
+.ct-body{display:grid;grid-template-columns:3fr 2fr;gap:6rem;padding:100px 8vw;align-items:start}
+.cf-title{font-family:var(--fh);font-size:1.4rem;font-weight:800;color:var(--navy);letter-spacing:-.03em;margin-bottom:2rem}
+.cf-row{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem}
+.cf-grp{display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.2rem}
+.cf-lbl{font-size:.73rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--navy);opacity:.65}
+.cf-inp,.cf-ta{width:100%;padding:13px 16px;border:1.5px solid var(--gray);border-radius:4px;font-family:var(--fb);font-size:.9rem;color:var(--navy);background:#fff;outline:none;transition:border-color .3s,box-shadow .3s;cursor:none}
+.cf-inp:focus,.cf-ta:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(29,78,216,.1)}
+.cf-ta{min-height:140px;resize:vertical}
+.cf-check{display:flex;align-items:flex-start;gap:10px;margin-bottom:1.8rem}
+.cf-check input{margin-top:3px;accent-color:var(--accent);width:16px;height:16px;cursor:none}
+.cf-check label{font-size:.83rem;color:#4A5E7A;line-height:1.5}
+.cf-check a{color:var(--accent)}
+.ci-card{background:var(--off);border:1px solid var(--gray);border-radius:4px;padding:2.2rem;margin-bottom:1.2rem}
+.ci-card-title{font-family:var(--fh);font-size:.9rem;font-weight:700;color:var(--navy);margin-bottom:1.2rem}
+.ci-item{display:flex;gap:.8rem;align-items:flex-start;margin-bottom:.9rem}
+.ci-ico{font-size:1rem;margin-top:2px;min-width:20px}
+.ci-txt{font-size:.85rem;font-weight:300;color:#4A5E7A;line-height:1.55}
+.ci-txt strong{font-weight:500;color:var(--navy);display:block;margin-bottom:2px}
+.ci-txt a{color:var(--accent);text-decoration:none}
+
+/* ABOUT */
+.ab-layout{display:grid;grid-template-columns:1fr 1fr;gap:8rem;align-items:center;padding:100px 8vw}
+.ab-img{width:100%;height:520px;object-fit:cover;border-radius:2px;display:block}
+.ab-vals{padding:100px 8vw;background:var(--navy)}
+.av-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:3.5rem;background:rgba(255,255,255,.07)}
+.av-card{background:rgba(255,255,255,.03);padding:2.5rem 2rem;transition:background .4s}
+.av-card:hover{background:rgba(255,255,255,.08)}
+.av-ico{font-size:2rem;margin-bottom:1.2rem;display:block}
+.av-title{font-family:var(--fh);font-size:1rem;font-weight:700;color:#fff;margin-bottom:.6rem}
+.av-txt{font-size:.84rem;font-weight:300;color:rgba(255,255,255,.55);line-height:1.65}
+
+/* LEGAL */
+.legal-w{padding:140px 8vw 100px;max-width:860px;margin:0 auto}
+.legal-title{font-family:var(--fh);font-size:2.4rem;font-weight:800;color:var(--navy);letter-spacing:-.04em;margin-bottom:.6rem}
+.legal-date{font-size:.8rem;color:var(--gtxt);margin-bottom:3rem}
+.legal-s{margin-bottom:2.5rem}
+.legal-s h2{font-family:var(--fh);font-size:1.15rem;font-weight:700;color:var(--navy);margin-bottom:.8rem}
+.legal-s p,.legal-s li{font-size:.9rem;font-weight:300;color:#4A5E7A;line-height:1.75;margin-bottom:.5rem}
+.legal-s ul{padding-left:1.2rem}
+.legal-s a{color:var(--accent)}
+
+/* FOOTER */
+footer{background:var(--navy-deep);color:#fff;padding:70px 8vw 36px}
+.ft-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:4rem;padding-bottom:50px;border-bottom:1px solid rgba(255,255,255,.07);margin-bottom:32px}
+.ft-logo img{height:48px;width:auto;margin-bottom:.9rem;display:block;filter:brightness(0) invert(1)}
+.ft-tag{font-size:.82rem;font-weight:300;color:rgba(255,255,255,.45);line-height:1.65;max-width:240px;margin-bottom:1.2rem}
+.ft-contact a{font-size:.82rem;color:rgba(255,255,255,.55);text-decoration:none;display:block;margin-bottom:.4rem;transition:color .2s}
+.ft-contact a:hover{color:var(--accent-b)}
+.ft-socials{display:flex;gap:10px;margin-top:1rem}
+.ft-soc{width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.55);text-decoration:none;font-size:.78rem;font-weight:700;transition:all .2s}
+.ft-soc:hover{border-color:var(--accent-b);background:var(--accent-b);color:#fff}
+.ft-col-title{font-family:var(--fh);font-size:.7rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:1rem}
+.ft-links{list-style:none;padding:0}
+.ft-links li{margin-bottom:.55rem}
+.ft-links a{font-size:.84rem;color:rgba(255,255,255,.55);text-decoration:none;font-weight:300;transition:color .2s}
+.ft-links a:hover{color:var(--accent-b)}
+.ft-bot{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+.ft-copy{font-size:.75rem;color:rgba(255,255,255,.25)}
+.ft-legal{display:flex;gap:1.5rem}
+.ft-legal a{font-size:.75rem;color:rgba(255,255,255,.25);text-decoration:none;transition:color .2s}
+.ft-legal a:hover{color:rgba(255,255,255,.6)}
+
+/* BACK LINK */
+.back-lnk{font-size:.82rem;color:var(--accent);text-decoration:none;display:inline-flex;align-items:center;gap:6px;margin-bottom:2rem;transition:gap .3s}
+.back-lnk:hover{gap:10px}
+
+/* PARTNERS PAGE */
+.pt-hero{background:var(--navy);color:#fff;padding:160px 8vw 100px;position:relative;overflow:hidden}
+.pt-hero::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(59,130,246,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(59,130,246,.05) 1px,transparent 1px);background-size:50px 50px}
+.pt-hero::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 700px 500px at 80% 50%,rgba(29,78,216,.3),transparent)}
+.pt-hi{position:relative;z-index:1;max-width:720px}
+
+.pt-cats{padding:100px 8vw}
+.pt-cat{margin-bottom:80px}
+.pt-cat-title{font-family:var(--fh);font-size:1.3rem;font-weight:800;color:var(--navy);letter-spacing:-.03em;margin-bottom:.5rem;display:flex;align-items:center;gap:12px}
+.pt-cat-title::after{content:'';flex:1;height:1.5px;background:var(--gray)}
+.pt-cat-sub{font-size:.88rem;font-weight:300;color:#4A5E7A;margin-bottom:2rem}
+.pt-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5px;background:rgba(11,30,61,.08)}
+.pt-card{
+  background:#fff;padding:2.2rem 1.8rem;
+  display:flex;flex-direction:column;align-items:flex-start;
+  position:relative;overflow:hidden;
+  transition:transform .4s,box-shadow .4s;cursor:none;
+}
+.pt-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--navy));transform:scaleX(0);transform-origin:left;transition:transform .4s}
+.pt-card:hover::after{transform:scaleX(1)}
+.pt-card:hover{transform:translateY(-4px);box-shadow:0 20px 50px rgba(11,30,61,.1)}
+.pt-card-ico{width:52px;height:52px;border-radius:10px;background:rgba(29,78,216,.09);display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin-bottom:1.2rem;transition:background .3s,transform .3s}
+.pt-card:hover .pt-card-ico{background:var(--accent);transform:rotate(-5deg)}
+.pt-card-name{font-family:var(--fh);font-size:.95rem;font-weight:700;color:var(--navy);margin-bottom:.4rem}
+.pt-card-desc{font-size:.82rem;font-weight:300;color:#4A5E7A;line-height:1.6}
+
+.pt-cta{background:var(--off);padding:80px 8vw;text-align:center;border-top:1px solid var(--gray)}
+.pt-cta h2{font-family:var(--fh);font-size:clamp(1.6rem,3vw,2.4rem);font-weight:800;color:var(--navy);letter-spacing:-.035em;margin-bottom:1rem}
+.pt-cta p{font-size:1rem;font-weight:300;color:#4A5E7A;line-height:1.75;max-width:520px;margin:0 auto 2rem}
+
+/* RESPONSIVE — Tablette (768px–900px) */
+@media(max-width:900px){
+  .n-links{display:none}.burger{display:block}
+  .sw{padding:80px 6vw}
+  .hero-content{padding:40px 6vw 60px}
+  .stats-bar{flex-wrap:wrap}.stat{min-width:50%}
+  .exp-intro{grid-template-columns:1fr;gap:2rem}
+  .exp-grid{grid-template-columns:1fr 1fr}
+  .why-layout{grid-template-columns:1fr;gap:4rem}
+  .why-img-w{height:320px;order:-1}
+  .cta-band{grid-template-columns:1fr;padding:70px 6vw;gap:2rem}
+  .ft-top{grid-template-columns:1fr 1fr;gap:2.5rem}
+  .ct-body{grid-template-columns:1fr;gap:3rem}
+  .cf-row{grid-template-columns:1fr}
+  .srv-bi{grid-template-columns:1fr;gap:3rem}
+  .srv-block{padding:70px 6vw}
+  .srv-block:nth-child(even) .srv-bi{direction:ltr}
+  .ab-layout{grid-template-columns:1fr;gap:3rem;padding:70px 6vw}
+  .av-grid{grid-template-columns:1fr 1fr}
+  .pt-grid{grid-template-columns:repeat(2,1fr)}
+  .pt-cats{padding:70px 6vw}
+  .srv-hero,.ct-hero,.pt-hero{padding:130px 6vw 70px}
+  .legal-w{padding:110px 6vw 70px}
+}
+
+/* RESPONSIVE — Mobile (<768px) */
+@media(max-width:600px){
+  #nav{padding:0 4vw;height:70px}
+  .mobile-menu{top:70px}
+  .n-logo img{height:42px}
+  .sw{padding:60px 5vw}
+  .hero-content{padding:30px 5vw 40px}
+  .hero-title{font-size:clamp(2rem,8vw,3rem)}
+  .hero-sub{font-size:.95rem}
+  .hero-btns{flex-direction:column;gap:.8rem}
+  .btn-w,.btn-o{justify-content:center;width:100%}
+  .stats-bar{flex-direction:column}
+  .stat{min-width:100%;border-right:none;border-bottom:1px solid rgba(255,255,255,.1);padding:18px 5vw}
+  .stat:last-child{border-bottom:none}
+  .exp-grid{grid-template-columns:1fr}
+  .exp-intro{grid-template-columns:1fr;gap:1.5rem}
+  .why-img-w{height:260px}
+  .cta-band{padding:60px 5vw}
+  .cb-title{font-size:clamp(1.6rem,6vw,2.2rem)}
+  .ft-top{grid-template-columns:1fr;gap:2rem}
+  .ft-bot{flex-direction:column;align-items:flex-start;gap:.8rem}
+  .ft-legal{flex-wrap:wrap;gap:.8rem}
+  .srv-bi{gap:2rem}
+  .srv-img{height:260px}
+  .srv-name{font-size:1.4rem}
+  .ab-layout{padding:60px 5vw}
+  .ab-img{height:280px}
+  .av-grid{grid-template-columns:1fr}
+  .ab-vals{padding:60px 5vw}
+  .ct-body{padding:60px 5vw;gap:2.5rem}
+  .pt-grid{grid-template-columns:1fr}
+  .pt-cats{padding:60px 5vw}
+  .pt-cat-title{font-size:1.1rem}
+  .srv-hero,.ct-hero,.pt-hero{padding:110px 5vw 60px}
+  .srv-htitle{font-size:clamp(1.8rem,7vw,2.8rem)}
+  .legal-w{padding:100px 5vw 60px}
+  .why-pts .why-pt{flex-direction:column;gap:.8rem}
+  .titem{padding:0 1.5rem;font-size:.65rem}
+}
+</style>
+</head>
+<body>
+
+<div id="cur"></div>
+<div id="curR"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#" class="n-logo" onclick="show('home');return false;">
+    <img src="https://blar-immo.fr/wp-content/uploads/2026/04/cropped-LOGO-BLAR-IMMO-BLEU.png" alt="BLAR IMMO">
+  </a>
+  <ul class="n-links">
+    <li><a href="#" onclick="show('home');return false;">Accueil</a></li>
+    <li><a href="#" onclick="show('services');return false;">Services</a></li>
+    <li><a href="#" onclick="show('partners');return false;">Partenaires</a></li>
+    <li><a href="#" onclick="show('about');return false;">À propos</a></li>
+    <li><a href="#" onclick="show('contact');return false;" class="n-cta">Prendre RDV</a></li>
+  </ul>
+  <button class="burger" id="burger" onclick="toggleMenu()">☰</button>
+</nav>
+<nav class="mobile-menu" id="mobileMenu">
+  <a href="#" onclick="show('home');toggleMenu();return false;">Accueil</a>
+  <a href="#" onclick="show('services');toggleMenu();return false;">Services</a>
+  <a href="#" onclick="show('partners');toggleMenu();return false;">Partenaires</a>
+  <a href="#" onclick="show('about');toggleMenu();return false;">À propos</a>
+  <a href="#" onclick="show('contact');toggleMenu();return false;">Prendre RDV →</a>
+</nav>
+
+<!-- ══════════════════════════════════════
+     PAGE ACCUEIL
+══════════════════════════════════════ -->
+<div class="page active" id="page-home">
+
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-ov"></div>
+    <div class="hero-grid"></div>
+    <div class="hero-orb hero-orb-1"></div>
+    <div class="hero-orb hero-orb-2"></div>
+    <div class="hero-content">
+      <div class="hero-badge"><span class="bdot"></span> Agence 100% digitale</div>
+      <h1 class="hero-title">
+        Faites de votre patrimoine<br>
+        immobilier un levier de<br>
+        <span class="hi">performance</span>
+      </h1>
+      <p class="hero-sub">BLAR IMMO accompagne propriétaires et investisseurs dans la gestion et le développement de leur patrimoine immobilier, avec une approche rigoureuse, transparente et performante.</p>
+      <div class="hero-btns">
+        <a href="#" class="btn-w" onclick="show('contact');return false;"><span>Prendre rendez-vous</span><span>→</span></a>
+        <a href="#" class="btn-o" onclick="show('services');return false;">Nos services →</a>
+      </div>
+    </div>
+    <div class="stats-bar">
+      <div class="stat"><div class="snum">100<em>%</em></div><div class="slbl">En ligne</div></div>
+      <div class="stat"><div class="snum">48<em>h</em></div><div class="slbl">Délai de réponse</div></div>
+      <div class="stat"><div class="snum">0<em>€</em></div><div class="slbl">Frais cachés</div></div>
+      <div class="stat"><div class="snum">IDF<em>+</em></div><div class="slbl">Zone couverte</div></div>
+    </div>
+  </section>
+
+  <div class="ticker">
+    <div class="ttrack">
+      <span class="titem">Gestion Locative <span class="tsep">✦</span></span>
+      <span class="titem">Conseil Patrimonial <span class="tsep">✦</span></span>
+      <span class="titem">Investissement Immobilier <span class="tsep">✦</span></span>
+      <span class="titem">100% En Ligne <span class="tsep">✦</span></span>
+      <span class="titem">Courbevoie — Île-de-France <span class="tsep">✦</span></span>
+      <span class="titem">Transparence Totale <span class="tsep">✦</span></span>
+      <span class="titem">Gestion Locative <span class="tsep">✦</span></span>
+      <span class="titem">Conseil Patrimonial <span class="tsep">✦</span></span>
+      <span class="titem">Investissement Immobilier <span class="tsep">✦</span></span>
+      <span class="titem">100% En Ligne <span class="tsep">✦</span></span>
+      <span class="titem">Courbevoie — Île-de-France <span class="tsep">✦</span></span>
+      <span class="titem">Transparence Totale <span class="tsep">✦</span></span>
+    </div>
+  </div>
+
+  <section class="sw" style="background:var(--off)">
+    <div class="exp-intro">
+      <div>
+        <div class="slabel rv">Nos expertises</div>
+        <h2 class="stitle rv">Un accompagnement complet<br>pour votre patrimoine</h2>
+      </div>
+      <p class="ssub rv">Gérer, optimiser et développer votre patrimoine immobilier en toute sérénité — depuis notre agence digitale basée à Courbevoie.</p>
+    </div>
+    <div class="exp-grid">
+      <div class="exp-card rv">
+        <div class="exp-n">01</div>
+        <div class="exp-ico">🏠</div>
+        <div class="exp-name">Gestion & Valorisation</div>
+        <ul class="exp-list">
+          <li>Gestion locative clé en main</li>
+          <li>Optimisation des revenus locatifs</li>
+          <li>Suivi et coordination des travaux</li>
+          <li>États des lieux digitaux</li>
+        </ul>
+        <a href="#" class="exp-lnk" onclick="show('services');return false;">Découvrir →</a>
+      </div>
+      <div class="exp-card rv">
+        <div class="exp-n">02</div>
+        <div class="exp-ico">📊</div>
+        <div class="exp-name">Conseil & Stratégie Immobilière</div>
+        <ul class="exp-list">
+          <li>Estimation de vos biens</li>
+          <li>Analyse patrimoniale complète</li>
+          <li>Optimisation fiscale</li>
+          <li>Recommandations sur mesure</li>
+        </ul>
+        <a href="#" class="exp-lnk" onclick="show('services');return false;">En savoir plus →</a>
+      </div>
+      <div class="exp-card rv">
+        <div class="exp-n">03</div>
+        <div class="exp-ico">🔑</div>
+        <div class="exp-name">Investissement & Transaction</div>
+        <ul class="exp-list">
+          <li>Achat immobilier accompagné</li>
+          <li>Réseau d'agences partenaires</li>
+          <li>Mise en relation qualifiée</li>
+          <li>Due diligence & négociation</li>
+        </ul>
+        <a href="#" class="exp-lnk" onclick="show('services');return false;">Voir les offres →</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="sw">
+    <div class="why-layout">
+      <div class="why-img-w rv">
+        <img class="why-img" src="https://images.pexels.com/photos/3182773/pexels-photo-3182773.jpeg?auto=compress&cs=tinysrgb&w=900" alt="BLAR IMMO équipe">
+        <div class="why-float">
+          <div class="wf-lbl">Satisfaction client</div>
+          <div class="wf-val">98%</div>
+          <div class="wf-sub">Propriétaires satisfaits</div>
+        </div>
+      </div>
+      <div>
+        <div class="slabel rv">Pourquoi nous choisir</div>
+        <h2 class="stitle rv">BLAR IMMO,<br>l'immobilier réinventé.</h2>
+        <p class="ssub rv" style="margin-bottom:0">Une agence 100% en ligne, basée à Courbevoie, qui allie expertise humaine et outils digitaux pour maximiser la performance de votre patrimoine.</p>
+        <div class="why-pts">
+          <div class="why-pt rv">
+            <div class="wp-ico">👤</div>
+            <div><div class="wp-title">Un seul interlocuteur</div><p class="wp-txt">Votre conseiller dédié connaît votre dossier sur le bout des doigts. Fini les transferts d'appels.</p></div>
+          </div>
+          <div class="why-pt rv">
+            <div class="wp-ico">🤝</div>
+            <div><div class="wp-title">Un réseau de professionnels qualifiés</div><p class="wp-txt">Notaires, agents, artisans, fiscalistes — un écosystème de confiance sélectionné pour vous.</p></div>
+          </div>
+          <div class="why-pt rv">
+            <div class="wp-ico">🔍</div>
+            <div><div class="wp-title">Une gestion rigoureuse et transparente</div><p class="wp-txt">Chaque action est documentée. Visibilité totale en temps réel depuis votre espace client.</p></div>
+          </div>
+          <div class="why-pt rv">
+            <div class="wp-ico">📈</div>
+            <div><div class="wp-title">Une approche orientée rentabilité</div><p class="wp-txt">Nous optimisons continuellement votre rendement pour maximiser votre patrimoine sur le long terme.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="cta-band">
+    <div class="cb-title">Prêt à optimiser<br>votre <em>patrimoine</em> ?</div>
+    <div class="cb-right">
+      <a href="#" class="btn-cta" onclick="show('contact');return false;">Prendre rendez-vous →</a>
+      <span class="cb-note">Premier échange offert · Sans engagement</span>
+    </div>
+  </div>
+
+  <footer>
+    <div class="ft-top">
+      <div>
+        <div class="ft-logo"><img src="https://blar-immo.fr/wp-content/uploads/2026/04/cropped-LOGO-BLAR-IMMO-BLEU.png" alt="BLAR IMMO"></div>
+        <p class="ft-tag">Des biens optimisés, un avenir stabilisé. Agence immobilière de gestion 100% en ligne.</p>
+        <div class="ft-contact">
+          <a href="tel:0668277091">📞 06 68 27 70 91</a>
+          <a href="mailto:baptiste@blar-immo.fr">✉ baptiste@blar-immo.fr</a>
+          <a href="#">📍 9 bis rue Baliat, 92400 Courbevoie</a>
+        </div>
+        <div class="ft-socials">
+          <a href="#" class="ft-soc">f</a>
+          <a href="#" class="ft-soc">ig</a>
+          <a href="#" class="ft-soc">in</a>
+        </div>
+      </div>
+      <div>
+        <div class="ft-col-title">Services</div>
+        <ul class="ft-links">
+          <li><a href="#" onclick="show('services');return false;">Gestion & Valorisation</a></li>
+          <li><a href="#" onclick="show('services');return false;">Conseil & Stratégie</a></li>
+          <li><a href="#" onclick="show('services');return false;">Investissement</a></li>
+          <li><a href="#" onclick="show('partners');return false;">Nos Partenaires</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="ft-col-title">Entreprise</div>
+        <ul class="ft-links">
+          <li><a href="#" onclick="show('about');return false;">À propos</a></li>
+          <li><a href="#" onclick="show('contact');return false;">Contact</a></li>
+          <li><a href="#">Carte Gestion : N° (à compléter)</a></li>
+          <li><a href="#">RC PRO : (à compléter)</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="ft-col-title">Légal</div>
+        <ul class="ft-links">
+          <li><a href="#" onclick="show('privacy');return false;">Politique de confidentialité</a></li>
+          <li><a href="#" onclick="show('cgv');return false;">Conditions générales</a></li>
+          <li><a href="#" onclick="show('mentions');return false;">Mentions légales</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="ft-bot">
+      <span class="ft-copy">© 2026 BLAR IMMO. Tous droits réservés.</span>
+      <div class="ft-legal">
+        <a href="#" onclick="show('mentions');return false;">Mentions légales</a>
+        <a href="#" onclick="show('cgv');return false;">CGV</a>
+        <a href="#" onclick="show('privacy');return false;">Confidentialité</a>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- ══════════════════════════════════════
+     PAGE SERVICES
+══════════════════════════════════════ -->
+<div class="page" id="page-services">
+  <div class="srv-hero">
+    <div class="srv-hi">
+      <div class="srv-hlbl">Nos services</div>
+      <h1 class="srv-htitle">Un accompagnement immobilier complet, de A à Z.</h1>
+      <p class="srv-hsub">De la gestion quotidienne à la stratégie patrimoniale long terme, BLAR IMMO couvre l'ensemble de vos besoins avec expertise et transparence.</p>
+    </div>
+  </div>
+
+  <div class="srv-block">
+    <div class="srv-bi">
+      <div>
+        <div class="srv-num">01</div>
+        <div class="srv-name">Gestion & Valorisation</div>
+        <p class="srv-desc">Nous prenons en charge l'ensemble des tâches liées à la gestion locative de votre bien, de la mise en location à l'encaissement des loyers, en passant par la relation locataire et le suivi technique.</p>
+        <ul class="srv-feats">
+          <li>Gestion locative complète et clé en main</li>
+          <li>Optimisation des revenus locatifs</li>
+          <li>Suivi et coordination des travaux</li>
+          <li>États des lieux digitaux (entrée & sortie)</li>
+          <li>Gestion des sinistres et assurances</li>
+          <li>Encaissement et reversement des loyers</li>
+          <li>Reporting mensuel propriétaire</li>
+        </ul>
+        <a href="#" class="btn-navy" onclick="show('contact');return false;"><span>Demander un devis</span><span>→</span></a>
+      </div>
+      <img class="srv-img" src="https://images.pexels.com/photos/1546168/pexels-photo-1546168.jpeg?auto=compress&cs=tinysrgb&w=900" alt="Gestion locative">
+    </div>
+  </div>
+
+  <div class="srv-block">
+    <div class="srv-bi">
+      <div>
+        <div class="srv-num">02</div>
+        <div class="srv-name">Conseil & Stratégie Immobilière</div>
+        <p class="srv-desc">Bénéficiez d'une vision claire et structurée pour vos décisions patrimoniales. Nos experts analysent votre situation et vous proposent des recommandations sur mesure.</p>
+        <ul class="srv-feats">
+          <li>Estimation précise de vos biens</li>
+          <li>Analyse patrimoniale globale</li>
+          <li>Optimisation fiscale (LMNP, SCI, déficit…)</li>
+          <li>Recommandations d'arbitrage</li>
+          <li>Accompagnement sur la durée</li>
+          <li>Bilan patrimonial complet</li>
+        </ul>
+        <a href="#" class="btn-navy" onclick="show('contact');return false;"><span>Prendre RDV conseil</span><span>→</span></a>
+      </div>
+      <img class="srv-img" src="https://images.pexels.com/photos/7578939/pexels-photo-7578939.jpeg?auto=compress&cs=tinysrgb&w=900" alt="Conseil stratégie">
+    </div>
+  </div>
+
+  <div class="srv-block">
+    <div class="srv-bi">
+      <div>
+        <div class="srv-num">03</div>
+        <div class="srv-name">Investissement & Transaction</div>
+        <p class="srv-desc">Que vous souhaitiez acquérir votre premier bien ou développer un portefeuille existant, notre réseau et notre expertise du marché vous ouvrent des opportunités exclusives.</p>
+        <ul class="srv-feats">
+          <li>Recherche de biens selon vos critères</li>
+          <li>Achat immobilier accompagné</li>
+          <li>Réseau d'agences partenaires qualifiées</li>
+          <li>Mise en relation notaires & financement</li>
+          <li>Négociation et due diligence</li>
+          <li>Analyse de rentabilité avant achat</li>
+        </ul>
+        <a href="#" class="btn-navy" onclick="show('contact');return false;"><span>Voir les opportunités</span><span>→</span></a>
+      </div>
+      <img class="srv-img" src="https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg?auto=compress&cs=tinysrgb&w=900" alt="Investissement">
+    </div>
+  </div>
+
+  <div class="cta-band">
+    <div class="cb-title">Un projet ? Parlons-en<br>sans <em>engagement.</em></div>
+    <div class="cb-right">
+      <a href="#" class="btn-cta" onclick="show('contact');return false;">Nous contacter →</a>
+      <span class="cb-note">Premier échange offert · Réponse sous 48h</span>
+    </div>
+  </div>
+
+  <footer>
+    <div class="ft-top">
+      <div>
+        <div class="ft-logo"><img src="https://blar-immo.fr/wp-content/uploads/2026/04/cropped-LOGO-BLAR-IMMO-BLEU.png" alt="BLAR IMMO"></div>
+        <p class="ft-tag">Des biens optimisés, un avenir stabilisé.</p>
+        <div class="ft-contact">
+          <a href="tel:0668277091">📞 06 68 27 70 91</a>
+          <a href="mailto:baptiste@blar-immo.fr">✉ baptiste@blar-immo.fr</a>
+          <a href="#">📍 9 bis rue Baliat, 92400 Courbevoie</a>
+        </div>
+        <div class="ft-socials"><a href="#" class="ft-soc">f</a><a href="#" class="ft-soc">ig</a><a href="#" class="ft-soc">in</a></div>
+      </div>
+      <div><div class="ft-col-title">Services</div><ul class="ft-links"><li><a href="#" onclick="show('services');return false;">Gestion & Valorisation</a></li><li><a href="#" onclick="show('services');return false;">Conseil & Stratégie</a></li><li><a href="#" onclick="show('services');return false;">Investissement</a></li><li><a href="#" onclick="show('partners');return false;">Nos Partenaires</a></li></ul></div>
+      <div><div class="ft-col-title">Légal</div><ul class="ft-links"><li><a href="#" onclick="show('privacy');return false;">Confidentialité</a></li><li><a href="#" onclick="show('cgv');return false;">CGV</a></li><li><a href="#" onclick="show('mentions');return false;">Mentions légales</a></li></ul></div>
+      <div><div class="ft-col-title">Contact</div><ul class="ft-links"><li><a href="#" onclick="show('contact');return false;">Prendre RDV</a></li><li><a href="mailto:baptiste@blar-immo.fr">Nous écrire</a></li></ul></div>
+    </div>
+    <div class="ft-bot"><span class="ft-copy">© 2026 BLAR IMMO. Tous droits réservés.</span></div>
+  </footer>
+</div>
+
+<!-- ══════════════════════════════════════
+     PAGE CONTACT
+══════════════════════════════════════ -->
+<div class="page" id="page-contact">
+  <div class="ct-hero">
+    <div class="ct-hi">
+      <div class="srv-hlbl">Contact</div>
+      <h1 class="srv-htitle">Parlons de<br>votre projet</h1>
+      <p class="srv-hsub">Premier échange offert, sans engagement. Notre équipe vous répond sous 48h ouvrées.</p>
+    </div>
+  </div>
+  <div class="ct-body">
+    <div>
+      <div class="cf-title">Envoyez-nous un message</div>
+      <div class="cf-row">
+        <div class="cf-grp"><label class="cf-lbl">Prénom *</label><input type="text" class="cf-inp" placeholder="Baptiste"></div>
+        <div class="cf-grp"><label class="cf-lbl">Nom *</label><input type="text" class="cf-inp" placeholder="Dupont"></div>
+      </div>
+      <div class="cf-grp"><label class="cf-lbl">Email *</label><input type="email" class="cf-inp" placeholder="votre@email.fr"></div>
+      <div class="cf-grp"><label class="cf-lbl">Téléphone</label><input type="tel" class="cf-inp" placeholder="06 XX XX XX XX"></div>
+      <div class="cf-grp"><label class="cf-lbl">Adresse du bien (si applicable)</label><input type="text" class="cf-inp" placeholder="Ex : 12 rue de la Paix, 75001 Paris"></div>
+      <div class="cf-grp"><label class="cf-lbl">Message *</label><textarea class="cf-ta" placeholder="Décrivez votre projet ou votre besoin..."></textarea></div>
+      <div class="cf-check">
+        <input type="checkbox" id="rgpd">
+        <label for="rgpd">J'accepte que mes données soient utilisées pour traiter ma demande conformément à la <a href="#" onclick="show('privacy');return false;">politique de confidentialité</a> de BLAR IMMO.</label>
+      </div>
+      <button class="btn-navy" onclick="submitForm(this)"><span>Envoyer ma demande</span><span>→</span></button>
+      <div id="form-ok" style="display:none;margin-top:1.2rem;padding:1rem 1.2rem;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);border-radius:4px;color:#166534;font-size:.9rem;">✅ Message envoyé ! Nous vous répondons sous 48h ouvrées.</div>
+    </div>
+    <div>
+      <div class="ci-card">
+        <div class="ci-card-title">Informations de contact</div>
+        <div class="ci-item"><div class="ci-ico">📍</div><div class="ci-txt"><strong>Adresse</strong>9 bis rue Baliat<br>92400 Courbevoie</div></div>
+        <div class="ci-item"><div class="ci-ico">📞</div><div class="ci-txt"><strong>Téléphone</strong><a href="tel:0668277091">06 68 27 70 91</a></div></div>
+        <div class="ci-item"><div class="ci-ico">✉</div><div class="ci-txt"><strong>Email</strong><a href="mailto:baptiste@blar-immo.fr">baptiste@blar-immo.fr</a></div></div>
+      </div>
+      <div class="ci-card">
+        <div class="ci-card-title">Disponibilités</div>
+        <div class="ci-item"><div class="ci-ico">🕐</div><div class="ci-txt"><strong>Lundi – Vendredi</strong>9h00 – 19h00</div></div>
+        <div class="ci-item"><div class="ci-ico">📱</div><div class="ci-txt">100% en ligne — visites de biens sur RDV</div></div>
+      </div>
+      <div class="ci-card">
+        <div class="ci-card-title">Nous suivre</div>
+        <div style="display:flex;gap:10px;margin-top:.5rem">
+          <a href="#" style="width:34px;height:34px;border-radius:50%;border:1.5px solid var(--gray);display:flex;align-items:center;justify-content:center;color:var(--navy);text-decoration:none;font-size:.78rem;font-weight:700;transition:all .2s" onmouseover="this.style.background='#1D4ED8';this.style.borderColor='#1D4ED8';this.style.color='#fff'" onmouseout="this.style.background='';this.style.borderColor='var(--gray)';this.style.color='var(--navy)'">f</a>
+          <a href="#" style="width:34px;height:34px;border-radius:50%;border:1.5px solid var(--gray);display:flex;align-items:center;justify-content:center;color:var(--navy);text-decoration:none;font-size:.78rem;font-weight:700;transition:all .2s" onmouseover="this.style.background='#1D4ED8';this.style.borderColor='#1D4ED8';this.style.color='#fff'" onmouseout="this.style.background='';this.style.borderColor='var(--gray)';this.style.color='var(--navy)'">ig</a>
+          <a href="#" style="width:34px;height:34px;border-radius:50%;border:1.5px solid var(--gray);display:flex;align-items:center;justify-content:center;color:var(--navy);text-decoration:none;font-size:.78rem;font-weight:700;transition:all .2s" onmouseover="this.style.background='#1D4ED8';this.style.borderColor='#1D4ED8';this.style.color='#fff'" onmouseout="this.style.background='';this.style.borderColor='var(--gray)';this.style.color='var(--navy)'">in</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <footer>
+    <div class="ft-top">
+      <div>
+        <div class="ft-logo"><img src="https://blar-immo.fr/wp-content/uploads/2026/04/cropped-LOGO-BLAR-IMMO-BLEU.png" alt="BLAR IMMO"></div>
+        <p class="ft-tag">Des biens optimisés, un avenir stabilisé.</p>
+        <div class="ft-contact"><a href="tel:0668277091">📞 06 68 27 70 91</a><a href="mailto:baptiste@blar-immo.fr">✉ baptiste@blar-immo.fr</a></div>
+      </div>
+      <div><div class="ft-col-title">Pages</div><ul class="ft-links"><li><a href="#" onclick="show('home');return false;">Accueil</a></li><li><a href="#" onclick="show('services');return false;">Services</a></li><li><a href="#" onclick="show('about');return false;">À propos</a></li></ul></div>
+      <div><div class="ft-col-title">Légal</div><ul class="ft-links"><li><a href="#" onclick="show('privacy');return false;">Confidentialité</a></li><li><a href="#" onclick="show('cgv');return false;">CGV</a></li><li><a href="#" onclick="show('mentions');return false;">Mentions légales</a></li></ul></div>
+      <div></div>
+    </div>
+    <div class="ft-bot"><span class="ft-copy">© 2026 BLAR IMMO. Tous droits réservés.</span></div>
+  </footer>
+</div>
+
+<!-- ══════════════════════════════════════
+     PAGE À PROPOS
+══════════════════════════════════════ -->
+<div class="page" id="page-about">
+  <div class="srv-hero">
+    <div class="srv-hi">
+      <div class="srv-hlbl">À propos</div>
+      <h1 class="srv-htitle">L'immobilier repensé<br>pour votre avenir.</h1>
+      <p class="srv-hsub">BLAR IMMO est une agence immobilière de gestion 100% en ligne, fondée avec une mission simple : rendre la gestion patrimoniale accessible, transparente et performante.</p>
+    </div>
+  </div>
+  <div class="ab-layout">
+    <img class="ab-img rv" src="https://images.pexels.com/photos/3182812/pexels-photo-3182812.jpeg?auto=compress&cs=tinysrgb&w=900" alt="BLAR IMMO">
+    <div>
+      <div class="slabel rv">Notre histoire</div>
+      <h2 class="stitle rv">Née d'un constat,<br>animée par une vision.</h2>
+      <p class="ssub rv" style="margin-bottom:1.5rem">Trop de propriétaires confient leur patrimoine à des agences peu transparentes, aux honoraires opaques et à la réactivité limitée. BLAR IMMO est née pour changer ça.</p>
+      <p style="font-size:.9rem;font-weight:300;color:#4A5E7A;line-height:1.75" class="rv">Basée à Courbevoie, au cœur de l'Île-de-France, notre agence combine la rigueur d'une gestion professionnelle avec les outils digitaux les plus avancés. Chaque propriétaire bénéficie d'un suivi personnalisé, d'un espace client transparent et d'un interlocuteur unique.</p>
+      <div style="display:flex;gap:2.5rem;margin-top:2.5rem;flex-wrap:wrap" class="rv">
+        <div><div style="font-family:var(--fh);font-size:2rem;font-weight:800;color:var(--navy);letter-spacing:-.04em">100%</div><div style="font-size:.72rem;color:var(--gtxt);text-transform:uppercase;letter-spacing:.1em;margin-top:3px">Digital</div></div>
+        <div><div style="font-family:var(--fh);font-size:2rem;font-weight:800;color:var(--navy);letter-spacing:-.04em">IDF</div><div style="font-size:.72rem;color:var(--gtxt);text-transform:uppercase;letter-spacing:.1em;margin-top:3px">Île-de-France</div></div>
+        <div><div style="font-family:var(--fh);font-size:2rem;font-weight:800;color:var(--navy);letter-spacing:-.04em">1</div><div style="font-size:.72rem;color:var(--gtxt);text-transform:uppercase;letter-spacing:.1em;margin-top:3px">Interlocuteur</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="ab-vals">
+    <div class="slabel rv" style="color:rgba(59,130,246,.9)">Nos valeurs</div>
+    <h2 class="stitle rv" style="color:#fff">Ce qui nous guide<br>au quotidien.</h2>
+    <div class="av-grid">
+      <div class="av-card rv"><span class="av-ico">🔍</span><div class="av-title">Transparence</div><p class="av-txt">Zéro frais caché. Chaque euro, chaque décision est documenté et accessible dans votre espace propriétaire.</p></div>
+      <div class="av-card rv"><span class="av-ico">⚡</span><div class="av-title">Réactivité</div><p class="av-txt">Réponse garantie sous 48h. Votre temps est précieux, nous nous adaptons à votre rythme.</p></div>
+      <div class="av-card rv"><span class="av-ico">📈</span><div class="av-title">Performance</div><p class="av-txt">Chaque décision est prise avec un objectif : maximiser la rentabilité de votre patrimoine sur le long terme.</p></div>
+    </div>
+  </div>
+  <div class="cta-band">
+    <div class="cb-title">Travaillons ensemble<br>dès <em>aujourd'hui.</em></div>
+    <div class="cb-right">
+      <a href="#" class="btn-cta" onclick="show('contact');return false;">Prendre contact →</a>
+      <span class="cb-note">Premier échange gratuit</span>
+    </div>
+  </div>
+  <footer>
+    <div class="ft-top">
+      <div>
+        <div class="ft-logo"><img src="https://blar-immo.fr/wp-content/uploads/2026/04/cropped-LOGO-BLAR-IMMO-BLEU.png" alt="BLAR IMMO"></div>
+        <p class="ft-tag">Des biens optimisés, un avenir stabilisé.</p>
+        <div class="ft-contact"><a href="tel:0668277091">📞 06 68 27 70 91</a><a href="mailto:baptiste@blar-immo.fr">✉ baptiste@blar-immo.fr</a></div>
+        <div class="ft-socials"><a href="#" class="ft-soc">f</a><a href="#" class="ft-soc">ig</a><a href="#" class="ft-soc">in</a></div>
+      </div>
+      <div><div class="ft-col-title">Légal</div><ul class="ft-links"><li><a href="#" onclick="show('privacy');return false;">Confidentialité</a></li><li><a href="#" onclick="show('cgv');return false;">CGV</a></li><li><a href="#" onclick="show('mentions');return false;">Mentions légales</a></li></ul></div>
+      <div></div><div></div>
+    </div>
+    <div class="ft-bot"><span class="ft-copy">© 2026 BLAR IMMO. Tous droits réservés.</span></div>
+  </footer>
+</div>
+
+<!-- ══════════════════════════════════════
+     PAGE PARTENAIRES
+══════════════════════════════════════ -->
+<div class="page" id="page-partners">
+  <div class="pt-hero">
+    <div class="pt-hi">
+      <div class="srv-hlbl">Nos partenaires</div>
+      <h1 class="srv-htitle">Un réseau d'experts<br>sélectionnés pour vous.</h1>
+      <p class="srv-hsub">BLAR IMMO s'appuie sur un écosystème de professionnels qualifiés et de confiance pour vous offrir un accompagnement complet à chaque étape de votre projet immobilier.</p>
+    </div>
+  </div>
+
+  <div class="pt-cats">
+
+    <!-- Juridique & Notariat -->
+    <div class="pt-cat rv">
+      <h2 class="pt-cat-title">⚖️ Juridique & Notariat</h2>
+      <p class="pt-cat-sub">Des experts juridiques pour sécuriser chacune de vos transactions et vous conseiller sur les montages les plus adaptés.</p>
+      <div class="pt-grid">
+        <div class="pt-card rv">
+          <div class="pt-card-ico">🏛️</div>
+          <div class="pt-card-name">Études notariales</div>
+          <p class="pt-card-desc">Réseau de notaires partenaires en Île-de-France pour toutes vos transactions et successions.</p>
+        </div>
+        <div class="pt-card rv">
+          <div class="pt-card-ico">📋</div>
+          <div class="pt-card-name">Avocats spécialisés</div>
+          <p class="pt-card-desc">Conseil juridique en droit immobilier, baux commerciaux et litiges locatifs.</p>
+        </div>
+        <div class="pt-card rv">
+          <div class="pt-card-ico">🔏</div>
+          <div class="pt-card-name">Huissiers de justice</div>
+          <p class="pt-card-desc">Interventions rapides pour états des lieux, constats et procédures contentieuses.</p>
+        </div>
+        <div class="pt-card rv">
+          <div class="pt-card-ico">📝</div>
+          <div class="pt-card-name">Rédacteurs d'actes</div>
+          <p class="pt-card-desc">Rédaction et sécurisation de vos contrats de bail et actes de vente.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Financement -->
+    <div class="pt-cat rv">
+      <h2 class="pt-cat-title">💰 Financement & Banque</h2>
+      <p class="pt-cat-sub">Des courtiers et établissements financiers partenaires pour optimiser votre financement et votre fiscalité.</p>
+      <div class="pt-grid">
+        <div class="pt-card rv">
+          <div class="pt-card-ico">🏦</div>
+          <div class="pt-card-name">Courtiers en crédit</div>
+          <p class="pt-card-desc">Négociation des meilleures conditions de financement pour vos acquisitions immobilières.</p>
+        </div>
+        <div class="pt-card rv">
+          <div class="pt-card-ico">📊</div>
+          <div class="pt-card-name">Conseillers fiscaux</div>
+          <p class="pt-card-desc">Optimisation fiscale : LMNP, SCI, déficit foncier, démembrement de propriété.</p>
+        </div>
+        <div class="pt-card rv">
+          <div class="pt-card-ico">🛡️</div>
+          <div class="pt-card-name">Assureurs spécialisés</div>
+          <p class="pt-card-desc">Garanties loyers impayés, assurance PNO, multirisque habitation aux meilleurs tarifs.</p>
+        </div>
+        <div class="pt-card rv">
+          <div class="pt-card-ico">💹</div>
+          <div class="pt-card-name">Gestionnaires de patrimoine</div>
+          <p class="pt-card-desc">Conseil global sur votre stratégie patrimoniale et vos placements immobiliers.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Travaux & Rénovation -->
+    <div class="pt-cat rv">
+      <h2 class="pt-cat-title">🔨 Travaux & Rénovation</h2>
+      <p class="pt-cat-sub">Un réseau d'artisans et entreprises du bâtiment sélectionnés pour leur qualité et leur fiabilité.</p>
+      <div class="pt-grid">
+        <div class="pt-card rv">
+          <div class="pt-card-ico">🏗️</div>
+          <div class="pt-card-name">Entreprises générales</div>
+          <p class="pt-card-desc">Rénovation complète, extension, surélévation — des intervenants de confiance et réactifs.</p>
+        </div>
+        <div class="pt-card rv">
+          <div class="pt-card-ico">⚡</div>
+          <div class="pt-card-name">Électriciens certifiés</div>
+          <p class="pt-card-desc">Mise aux normes, installation et diagnostic électrique pour vos biens locatifs.</p>
+        </div>
+        <div class="pt-card rv">
+          <div class="pt-card-ico">🔧</div>
+          <div class="pt-card-name">Plombiers & chauffagistes</div>
+          <p class="pt-card-desc">Interventions d'urgence et travaux planifiés, disponibles 7j/7 en Île-de-France.</p>
+        </div>
+        <div class="pt-card rv">
+          <div class="pt-card-ico">🎨</div>
+          <div class="pt-card-name">Décorateurs & architectes</div>
+          <p class="pt-card-desc">Valorisation de vos biens par le home staging et la rénovation esthétique ciblée.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Agences Immobilières -->
+    <div class="pt-cat rv">
+      <h2 class="pt-cat-title">🏢 Agences Immobilières</h2>
+      <p class="pt-cat-sub">Un réseau d'agences partenaires en Île-de-France et en province pour élargir vos opportunités d'investissement.</p>
+      <div class="pt-grid">
+        <div class="pt-card rv">
+          <div class="pt-card-ico">🗼</div>
+          <div class="pt-card-name">Agences Paris intra-muros</div>
+          <p class="pt-card-desc">Accès privilégié aux biens off-market dans les arrondissements les plus recherchés.</p>
+        </div>
+        <div class="pt-card rv">
+          <div class="pt-card-ico">🏙️</div>
+          <div class="pt-card-name">Agences Grand Paris</div>
+          <p class="pt-card-desc">Couverture complète de la petite couronne : Hauts-de-Seine, Seine-Saint-Denis, Val-de-Marne.</p>
+        </div>
+        <div class="pt-card rv">
+          <div class="pt-card-ico">🗺️</div>
+          <div class="pt-card-name">Réseaux en province</div>
+          <p class="pt-card-desc">Partenariats dans les grandes métropoles françaises pour diversifier votre patrimoine.</p>
+        </div>
+        <div class="pt-card rv">
+          <div class="pt-card-ico">🌐</div>
+          <div class="pt-card-name">Plateformes digitales</div>
+          <p class="pt-card-desc">Diffusion multi-canaux de vos annonces pour maximiser la visibilité de vos biens.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Devenir partenaire -->
+  <div class="pt-cta rv">
+    <div class="slabel" style="justify-content:center">Rejoindre le réseau</div>
+    <h2>Vous souhaitez devenir<br>partenaire BLAR IMMO ?</h2>
+    <p>Vous êtes professionnel de l'immobilier, du droit, du bâtiment ou de la finance ? Rejoignez notre réseau de partenaires sélectionnés et développons ensemble nos activités.</p>
+    <a href="#" class="btn-navy" onclick="show('contact');return false;"><span>Nous contacter</span><span>→</span></a>
+  </div>
+
+  <div class="cta-band">
+    <div class="cb-title">Besoin d'un expert<br><em>qualifié</em> pour votre projet ?</div>
+    <div class="cb-right">
+      <a href="#" class="btn-cta" onclick="show('contact');return false;">Prendre RDV →</a>
+      <span class="cb-note">Mise en relation gratuite</span>
+    </div>
+  </div>
+
+  <footer>
+    <div class="ft-top">
+      <div>
+        <div class="ft-logo"><img src="https://blar-immo.fr/wp-content/uploads/2026/04/cropped-LOGO-BLAR-IMMO-BLEU.png" alt="BLAR IMMO"></div>
+        <p class="ft-tag">Des biens optimisés, un avenir stabilisé.</p>
+        <div class="ft-contact">
+          <a href="tel:0668277091">📞 06 68 27 70 91</a>
+          <a href="mailto:baptiste@blar-immo.fr">✉ baptiste@blar-immo.fr</a>
+          <a href="#">📍 9 bis rue Baliat, 92400 Courbevoie</a>
+        </div>
+        <div class="ft-socials"><a href="#" class="ft-soc">f</a><a href="#" class="ft-soc">ig</a><a href="#" class="ft-soc">in</a></div>
+      </div>
+      <div>
+        <div class="ft-col-title">Services</div>
+        <ul class="ft-links">
+          <li><a href="#" onclick="show('services');return false;">Gestion & Valorisation</a></li>
+          <li><a href="#" onclick="show('services');return false;">Conseil & Stratégie</a></li>
+          <li><a href="#" onclick="show('services');return false;">Investissement</a></li>
+          <li><a href="#" onclick="show('partners');return false;">Nos Partenaires</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="ft-col-title">Entreprise</div>
+        <ul class="ft-links">
+          <li><a href="#" onclick="show('about');return false;">À propos</a></li>
+          <li><a href="#" onclick="show('contact');return false;">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="ft-col-title">Légal</div>
+        <ul class="ft-links">
+          <li><a href="#" onclick="show('privacy');return false;">Confidentialité</a></li>
+          <li><a href="#" onclick="show('cgv');return false;">CGV</a></li>
+          <li><a href="#" onclick="show('mentions');return false;">Mentions légales</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="ft-bot"><span class="ft-copy">© 2026 BLAR IMMO. Tous droits réservés.</span></div>
+  </footer>
+</div>
+
+<!-- ══════════════════════════════════════
+     PAGES LÉGALES
+══════════════════════════════════════ -->
+<div class="page" id="page-mentions">
+  <div style="padding-top:80px">
+    <div class="legal-w">
+      <a href="#" class="back-lnk" onclick="show('home');return false;">← Retour</a>
+      <h1 class="legal-title">Mentions légales</h1>
+      <p class="legal-date">Dernière mise à jour : mai 2026</p>
+      <div class="legal-s"><h2>Éditeur du site</h2><p><strong>BLAR IMMO</strong><br>9 bis rue Baliat, 92400 Courbevoie<br>Tél : 06 68 27 70 91<br>Email : baptiste@blar-immo.fr<br>Carte professionnelle de gestion : N° (à compléter)<br>RC PRO : (à compléter)</p></div>
+      <div class="legal-s"><h2>Hébergement</h2><p>Le site blar-immo.fr est hébergé par o2switch, 222-224 Boulevard Gustave Flaubert, 63000 Clermont-Ferrand.</p></div>
+      <div class="legal-s"><h2>Propriété intellectuelle</h2><p>L'ensemble du contenu de ce site (textes, images, logo) est la propriété de BLAR IMMO et est protégé par le droit d'auteur. Toute reproduction sans autorisation est interdite.</p></div>
+      <div class="legal-s"><h2>Responsabilité</h2><p>BLAR IMMO s'efforce d'assurer l'exactitude des informations diffusées sur ce site, mais ne saurait être tenue responsable des erreurs ou omissions.</p></div>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-cgv">
+  <div style="padding-top:80px">
+    <div class="legal-w">
+      <a href="#" class="back-lnk" onclick="show('home');return false;">← Retour</a>
+      <h1 class="legal-title">Conditions générales</h1>
+      <p class="legal-date">Dernière mise à jour : mai 2026</p>
+      <div class="legal-s"><h2>Objet</h2><p>Les présentes conditions générales régissent les relations contractuelles entre BLAR IMMO et ses clients propriétaires et/ou investisseurs.</p></div>
+      <div class="legal-s"><h2>Services proposés</h2><ul><li>Gestion locative et valorisation de biens immobiliers</li><li>Conseil et stratégie patrimoniale immobilière</li><li>Accompagnement à l'investissement et à la transaction</li></ul></div>
+      <div class="legal-s"><h2>Honoraires</h2><p>Les honoraires sont définis dans le mandat signé entre l'Agence et le Client. Toute prestation fait l'objet d'une proposition tarifaire claire et validée par le Client avant engagement.</p></div>
+      <div class="legal-s"><h2>Droit applicable</h2><p>Les présentes conditions sont soumises au droit français. Tout litige relève de la compétence des tribunaux de Nanterre.</p></div>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-privacy">
+  <div style="padding-top:80px">
+    <div class="legal-w">
+      <a href="#" class="back-lnk" onclick="show('home');return false;">← Retour</a>
+      <h1 class="legal-title">Politique de confidentialité</h1>
+      <p class="legal-date">Dernière mise à jour : mai 2026</p>
+      <div class="legal-s"><h2>Responsable du traitement</h2><p>BLAR IMMO — 9 bis rue Baliat, 92400 Courbevoie — baptiste@blar-immo.fr</p></div>
+      <div class="legal-s"><h2>Données collectées</h2><p>Via notre formulaire de contact, nous collectons : nom, prénom, adresse e-mail, téléphone, message et adresse du bien. Ces données sont utilisées uniquement pour traiter votre demande.</p></div>
+      <div class="legal-s"><h2>Conservation</h2><p>Les données sont conservées pendant une durée maximale de 3 ans à compter du dernier contact.</p></div>
+      <div class="legal-s"><h2>Vos droits</h2><p>Conformément au RGPD, vous disposez d'un droit d'accès, de rectification et d'effacement. Pour exercer ces droits : baptiste@blar-immo.fr</p></div>
+      <div class="legal-s"><h2>Cookies</h2><p>Ce site utilise uniquement des cookies techniques nécessaires à son bon fonctionnement. Aucun cookie publicitaire n'est déposé sans votre consentement.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SCRIPTS
+══════════════════════════════════════ -->
+<script>
+// ROUTER
+function show(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  setTimeout(initReveal,100);
+}
+
+// MOBILE MENU
+function toggleMenu(){
+  document.getElementById('mobileMenu').classList.toggle('open');
+  document.getElementById('burger').textContent=
+    document.getElementById('mobileMenu').classList.contains('open')?'✕':'☰';
+}
+
+// CURSOR
+const cur=document.getElementById('cur'),curR=document.getElementById('curR');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY});
+(function anim(){
+  cur.style.left=mx+'px';cur.style.top=my+'px';
+  rx+=(mx-rx)*.12;ry+=(my-ry)*.12;
+  curR.style.left=rx+'px';curR.style.top=ry+'px';
+  requestAnimationFrame(anim);
+})();
+document.addEventListener('mouseover',e=>{
+  if(e.target.matches('a,button,input,textarea,.exp-card,.why-pt')){
+    cur.style.transform='translate(-50%,-50%) scale(2.5)';
+    curR.style.opacity='0';
+  }
+});
+document.addEventListener('mouseout',e=>{
+  if(e.target.matches('a,button,input,textarea,.exp-card,.why-pt')){
+    cur.style.transform='translate(-50%,-50%) scale(1)';
+    curR.style.opacity='.5';
+  }
+});
+
+// NAV SCROLL
+window.addEventListener('scroll',()=>{
+  document.getElementById('nav').classList.toggle('scrolled',window.scrollY>50);
+});
+
+// REVEAL
+function initReveal(){
+  const els=document.querySelectorAll('.rv:not(.vis)');
+  const io=new IntersectionObserver((entries)=>{
+    entries.forEach((e,i)=>{
+      if(e.isIntersecting){
+        setTimeout(()=>e.target.classList.add('vis'),i*80);
+        io.unobserve(e.target);
+      }
+    });
+  },{threshold:.12});
+  els.forEach(el=>io.observe(el));
+}
+initReveal();
+
+// FORM
+function submitForm(btn){
+  btn.disabled=true;
+  btn.querySelector('span').textContent='Envoi en cours…';
+  setTimeout(()=>{
+    document.getElementById('form-ok').style.display='block';
+    btn.querySelector('span').textContent='Envoyé ✓';
+    btn.style.background='#166534';
+  },1200);
+}
+</script>
+</body>
+</html>
