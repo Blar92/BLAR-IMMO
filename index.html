@@ -6,12 +6,12 @@
 <title>BLAR-IMMO — Des biens optimisés, un avenir stabilisé</title>
 <meta name="description" content="BLAR-IMMO, agence immobilière 100% en ligne à Courbevoie. Gestion locative, conseil patrimonial et investissement immobilier en Île-de-France.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
   --navy:#0B1E3D;--navy-deep:#07122A;--accent:#1D4ED8;--accent-b:#3B82F6;
   --white:#fff;--off:#F6F8FC;--gray:#E4EAF4;--gtxt:#7B90B5;
-  --fh:'Syne',sans-serif;--fb:'DM Sans',sans-serif;
+  --fh:'Space Grotesk',sans-serif;--fb:'Outfit',sans-serif;
 }
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -1390,8 +1390,48 @@ footer{background:var(--navy-deep);color:#fff;padding:70px 8vw 36px}
               <input type="text" class="sim-input" id="simAdresse" placeholder="Ex : 12 rue de la Paix, 75001 Paris">
             </div>
             <div class="sim-grp">
-              <label class="sim-lbl">Date de révision</label>
+              <label class="sim-lbl">📅 Date de signature / prise d'effet du bail</label>
+              <input type="date" class="sim-input" id="simDateSignature">
+            </div>
+          </div>
+          <div class="sim-row">
+            <div class="sim-grp">
+              <label class="sim-lbl">📅 Date de la dernière révision (ou anniversaire du bail)</label>
+              <input type="date" class="sim-input" id="simDateDerniereRev">
+            </div>
+            <div class="sim-grp">
+              <label class="sim-lbl">📅 Date de la révision actuelle</label>
               <input type="date" class="sim-input" id="simDate">
+            </div>
+          </div>
+          <div class="sim-row">
+            <div class="sim-grp">
+              <label class="sim-lbl">📅 Date de prise d'effet du nouveau loyer</label>
+              <input type="date" class="sim-input" id="simDateEffet">
+            </div>
+            <div class="sim-grp" style="display:flex;flex-direction:column;justify-content:flex-end">
+              <div style="background:rgba(29,78,216,.05);border:1px solid rgba(29,78,216,.15);border-radius:4px;padding:.9rem 1rem;font-size:.8rem;color:#4A5E7A;line-height:1.5">
+                💡 Le prorata sera calculé automatiquement si la date d'effet est en cours de mois.
+              </div>
+            </div>
+          </div>
+
+          <!-- Prorata preview box -->
+          <div id="simProrataBox" style="display:none;background:rgba(29,78,216,.05);border:1px solid rgba(29,78,216,.2);border-radius:6px;padding:1.4rem 1.6rem;margin-top:.5rem">
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:.88rem;font-weight:700;color:var(--navy);margin-bottom:1rem;display:flex;align-items:center;gap:8px">📐 Prorata temporis détecté</div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem">
+              <div>
+                <div style="font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);margin-bottom:4px">Jours restants dans le mois</div>
+                <div style="font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:700;color:var(--navy)" id="prorataJours">—</div>
+              </div>
+              <div>
+                <div style="font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);margin-bottom:4px">Jours dans le mois</div>
+                <div style="font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:700;color:var(--navy)" id="prorataJoursMois">—</div>
+              </div>
+              <div>
+                <div style="font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);margin-bottom:4px">Loyer au prorata</div>
+                <div style="font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:700;color:var(--accent)" id="prorataLoyer">—</div>
+              </div>
             </div>
           </div>
         </div>
@@ -1455,6 +1495,8 @@ footer{background:var(--navy-deep);color:#fff;padding:70px 8vw 36px}
             <div class="sim-calc-title">ℹ️ Base légale</div>
             <div id="resLegal" style="font-size:.85rem;font-weight:300;color:#4A5E7A;line-height:1.7"></div>
           </div>
+
+          <div id="resProrataSection" style="display:none"></div>
 
           <button class="sim-download-btn" onclick="downloadPDF()">
             📄 <span>Télécharger le document justificatif (PDF)</span>
@@ -2225,9 +2267,18 @@ function calculate() {
   const diff = nouveauLoyer - loyer;
   const pct = ((idxNew - idxRef) / idxRef) * 100;
 
+  const dateEffetStr = document.getElementById('simDateEffet').value;
+  const dateSignature = document.getElementById('simDateSignature').value;
+  const dateDerniereRev = document.getElementById('simDateDerniereRev').value;
+  const prorata = calcProrata(nouveauLoyer, dateEffetStr, currentType);
+
   simData = { loyer, idxRef, idxNew, nouveauLoyer, diff, pct,
     refT, refA, newT, newA, type: currentType,
-    refKey, newKey };
+    refKey, newKey, prorata,
+    dateSignature: dateSignature ? new Date(dateSignature).toLocaleDateString('fr-FR') : null,
+    dateDerniereRev: dateDerniereRev ? new Date(dateDerniereRev).toLocaleDateString('fr-FR') : null,
+    dateEffet: dateEffetStr ? new Date(dateEffetStr).toLocaleDateString('fr-FR') : null
+  };
 
   // Display results — clean & simple
   document.getElementById('resAmount').innerHTML =
@@ -2259,6 +2310,39 @@ function calculate() {
   `;
 
   document.getElementById('resLegal').innerHTML = indice.legal + '<br><br><strong>Source :</strong> ' + indice.source;
+
+  // Prorata section in results
+  const prorataResEl = document.getElementById('resProrataSection');
+  if (prorata && prorataResEl) {
+    prorataResEl.style.display = 'block';
+    prorataResEl.innerHTML = `
+      <div class="sim-calc-box" style="background:rgba(29,78,216,.05);border:1px solid rgba(29,78,216,.2)">
+        <div class="sim-calc-title">📐 Prorata temporis — Prise d'effet le ${prorata.dateEffet}</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-bottom:1rem">
+          <div>
+            <div style="font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);margin-bottom:4px">Jours restants</div>
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:1.6rem;font-weight:700;color:var(--navy)">${prorata.joursRestants} j</div>
+            <div style="font-size:.75rem;color:#4A5E7A">sur ${prorata.joursDansMois} jours dans le mois</div>
+          </div>
+          <div>
+            <div style="font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);margin-bottom:4px">Loyer au prorata</div>
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:1.6rem;font-weight:700;color:var(--accent)">${prorata.loyerProrata.toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2})} €</div>
+            <div style="font-size:.75rem;color:#4A5E7A">pour le mois partiel uniquement</div>
+          </div>
+          <div>
+            <div style="font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);margin-bottom:4px">Loyer mensuel plein</div>
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:1.6rem;font-weight:700;color:var(--navy)">${nouveauLoyer.toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2})} €</div>
+            <div style="font-size:.75rem;color:#4A5E7A">à partir du 1er du mois suivant</div>
+          </div>
+        </div>
+        <div style="font-size:.82rem;color:#4A5E7A;background:#fff;border:1px solid var(--gray);border-radius:4px;padding:.8rem 1rem;line-height:1.7">
+          <strong>Méthode appliquée :</strong> ${prorata.methode}<br>
+          <strong>Calcul :</strong> ${nouveauLoyer.toFixed(2)} € ÷ ${prorata.joursDansMois} jours × ${prorata.joursRestants} jours = <strong>${prorata.loyerProrata.toFixed(2)} €</strong>
+        </div>
+      </div>`;
+  } else if (prorataResEl) {
+    prorataResEl.style.display = 'none';
+  }
 
   const resultEl = document.getElementById('simResult');
   resultEl.classList.add('show');
@@ -2337,37 +2421,66 @@ function downloadPDF() {
   const indice = INDICES[d.type];
   const locataire = document.getElementById('simLocataire').value || 'Non renseigné';
   const adresse = document.getElementById('simAdresse').value || 'Non renseignée';
-  const dateRev = document.getElementById('simDate').value ? new Date(document.getElementById('simDate').value).toLocaleDateString('fr-FR') : new Date().toLocaleDateString('fr-FR');
+  const dateRev = d.dateEffet || new Date().toLocaleDateString('fr-FR');
   const dateDoc = new Date().toLocaleDateString('fr-FR');
+  const dateSignature = d.dateSignature || 'Non renseignée';
+  const dateDerniereRev = d.dateDerniereRev || 'Non renseignée';
+
+  const prorataSection = d.prorata ? `
+    <div class="section">
+      <div class="section-title">📐 Calcul au prorata temporis</div>
+      <div style="background:rgba(29,78,216,.05);border:1px solid rgba(29,78,216,.15);border-radius:6px;padding:1.5rem;margin-bottom:1rem">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-bottom:1rem">
+          <div style="text-align:center">
+            <div style="font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:#1D4ED8;margin-bottom:4px">Date de prise d'effet</div>
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:700;color:#0B1E3D">${d.prorata.dateEffet}</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:#1D4ED8;margin-bottom:4px">Jours au prorata</div>
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:700;color:#0B1E3D">${d.prorata.joursRestants} j / ${d.prorata.joursDansMois} j</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:#1D4ED8;margin-bottom:4px">Loyer au prorata</div>
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:700;color:#1D4ED8">${d.prorata.loyerProrata.toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2})} €</div>
+          </div>
+        </div>
+        <div style="font-size:.82rem;color:#4A5E7A;background:#fff;border:1px solid #E4EAF4;border-radius:4px;padding:.8rem 1rem;line-height:1.7">
+          <strong>Méthode :</strong> ${d.prorata.methode}<br>
+          <strong>Calcul :</strong> ${d.nouveauLoyer.toFixed(2)} € ÷ ${d.prorata.joursDansMois} jours × ${d.prorata.joursRestants} jours = <strong>${d.prorata.loyerProrata.toFixed(2)} €</strong><br>
+          <strong>À partir du 1er du mois suivant :</strong> ${d.nouveauLoyer.toFixed(2)} €/mois (loyer plein)
+        </div>
+      </div>
+    </div>` : '';
+
 
   const html = `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8">
   <title>Avis d'indexation de loyer — BLAR-IMMO</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Outfit:wght@300;400;500;600&display=swap');
     *{margin:0;padding:0;box-sizing:border-box}
-    body{font-family:'DM Sans',sans-serif;color:#0B1E3D;background:#fff;padding:0}
+    body{font-family:'Outfit',sans-serif;color:#0B1E3D;background:#fff;padding:0}
     .header{background:#0B1E3D;padding:32px 48px;display:flex;justify-content:space-between;align-items:center}
-    .header-logo{color:#fff;font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;letter-spacing:-.03em}
+    .header-logo{color:#fff;font-family:'Space Grotesk',sans-serif;font-size:1.6rem;font-weight:800;letter-spacing:-.03em}
     .header-logo em{color:#3B82F6;font-style:normal}
     .header-right{text-align:right;color:rgba(255,255,255,.6);font-size:.8rem;line-height:1.6}
     .header-right strong{color:#fff;display:block;font-size:.9rem}
     .doc-title{background:#1D4ED8;color:#fff;padding:24px 48px;display:flex;justify-content:space-between;align-items:center}
-    .doc-title h1{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;letter-spacing:-.02em}
+    .doc-title h1{font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:800;letter-spacing:-.02em}
     .doc-title .badge{background:rgba(255,255,255,.15);border-radius:4px;padding:4px 12px;font-size:.75rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
     .body{padding:40px 48px}
     .parties{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-bottom:2rem;padding-bottom:2rem;border-bottom:1px solid #E4EAF4}
     .partie-box{background:#F6F8FC;border-radius:6px;padding:1.2rem 1.5rem}
     .partie-title{font-size:.7rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:#7B90B5;margin-bottom:.8rem}
-    .partie-name{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;color:#0B1E3D;margin-bottom:.3rem}
+    .partie-name{font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:700;color:#0B1E3D;margin-bottom:.3rem}
     .partie-detail{font-size:.85rem;color:#4A5E7A;line-height:1.6}
     .result-box{background:#0B1E3D;border-radius:8px;padding:2rem;margin-bottom:2rem;display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5rem}
     .res-item{text-align:center}
     .res-label{font-size:.68rem;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.5);margin-bottom:.4rem}
-    .res-val{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;color:#fff;letter-spacing:-.04em}
+    .res-val{font-family:'Space Grotesk',sans-serif;font-size:1.6rem;font-weight:800;color:#fff;letter-spacing:-.04em}
     .res-val.accent{color:#3B82F6}
     .res-val.green{color:#4ade80}
     .section{margin-bottom:1.8rem}
-    .section-title{font-family:'Syne',sans-serif;font-size:.9rem;font-weight:800;color:#0B1E3D;margin-bottom:.8rem;padding-bottom:.5rem;border-bottom:2px solid #1D4ED8;display:inline-block}
+    .section-title{font-family:'Space Grotesk',sans-serif;font-size:.9rem;font-weight:800;color:#0B1E3D;margin-bottom:.8rem;padding-bottom:.5rem;border-bottom:2px solid #1D4ED8;display:inline-block}
     .formula-box{background:#F6F8FC;border:1px solid #E4EAF4;border-radius:6px;padding:1.2rem;font-family:monospace;font-size:.85rem;color:#0B1E3D;line-height:1.9;margin-bottom:1rem}
     table{width:100%;border-collapse:collapse;margin-bottom:1rem}
     th{background:#F6F8FC;font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#7B90B5;padding:.7rem 1rem;text-align:left}
@@ -2375,7 +2488,7 @@ function downloadPDF() {
     td:last-child{font-weight:500;color:#0B1E3D;text-align:right}
     .legal-box{background:#F6F8FC;border-left:3px solid #1D4ED8;border-radius:0 6px 6px 0;padding:1.2rem 1.5rem;font-size:.82rem;color:#4A5E7A;line-height:1.7}
     .footer{background:#F6F8FC;border-top:1px solid #E4EAF4;padding:24px 48px;display:flex;justify-content:space-between;align-items:center;margin-top:2rem}
-    .footer-brand{font-family:'Syne',sans-serif;font-size:.9rem;font-weight:700;color:#0B1E3D}
+    .footer-brand{font-family:'Space Grotesk',sans-serif;font-size:.9rem;font-weight:700;color:#0B1E3D}
     .footer-brand em{color:#1D4ED8;font-style:normal}
     .footer-info{font-size:.75rem;color:#7B90B5;text-align:right;line-height:1.6}
     .note{font-size:.75rem;color:#7B90B5;font-style:italic;margin-top:1rem;padding:1rem;border:1px solid #E4EAF4;border-radius:4px}
@@ -2404,7 +2517,10 @@ function downloadPDF() {
       <div class="partie-box">
         <div class="partie-title">Locataire</div>
         <div class="partie-name">${locataire}</div>
-        <div class="partie-detail">${adresse}<br>Date de révision : ${dateRev}</div>
+        <div class="partie-detail">${adresse}<br>
+        Date de signature du bail : ${dateSignature}<br>
+        Dernière révision : ${dateDerniereRev}<br>
+        Date de révision actuelle : ${dateRev}</div>
       </div>
     </div>
     <div class="result-box">
@@ -2446,6 +2562,7 @@ Nouveau loyer = ${d.nouveauLoyer.toFixed(2)} €</div>
         <tr><td>Différence</td><td>${d.diff >= 0 ? '+' : ''}${d.diff.toFixed(2)} €</td><td>${d.diff >= 0 ? '+' : ''}${(d.diff*12).toFixed(2)} €</td></tr>
       </table>
     </div>
+    ${prorataSection}
     <div class="section">
       <div class="section-title">Base légale</div>
       <div class="legal-box">${indice.legal}<br><br><strong>Source officielle :</strong> ${indice.source}</div>
@@ -2485,6 +2602,67 @@ function miniCalc() {
     res.classList.add('show');
     document.getElementById('miniVal').textContent = nouveau.toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2}) + ' €/mois';
     document.getElementById('miniDiff').textContent = (diff >= 0 ? '▲ +' : '▼ ') + diff.toFixed(2) + ' € (' + (pct >= 0 ? '+' : '') + pct.toFixed(2) + '%)';
+  }
+}
+
+// PRORATA CALCULATION
+function calcProrata(nouveauLoyer, dateEffetStr, typeBail) {
+  if (!dateEffetStr) return null;
+  const dateEffet = new Date(dateEffetStr);
+  const jour = dateEffet.getDate();
+  if (jour === 1) return null; // Pas de prorata si le 1er du mois
+
+  const annee = dateEffet.getFullYear();
+  const mois = dateEffet.getMonth();
+
+  // Jours dans le mois de la prise d'effet
+  const joursDansMois = new Date(annee, mois + 1, 0).getDate();
+  // Jours restants à partir de la date d'effet (incluse)
+  const joursRestants = joursDansMois - jour + 1;
+
+  let loyerProrata, methode;
+
+  if (typeBail === 'IRL') {
+    // Habitation : prorata sur jours exacts du mois
+    loyerProrata = (nouveauLoyer / joursDansMois) * joursRestants;
+    methode = `Méthode habitation : Loyer mensuel ÷ ${joursDansMois} jours × ${joursRestants} jours restants`;
+  } else {
+    // Commercial/Tertiaire/Construction : prorata sur 365 jours
+    loyerProrata = (nouveauLoyer / 365) * joursRestants;
+    methode = `Méthode commerciale : Loyer mensuel ÷ 365 jours × ${joursRestants} jours restants`;
+  }
+
+  return {
+    joursRestants,
+    joursDansMois,
+    loyerProrata,
+    methode,
+    dateEffet: dateEffet.toLocaleDateString('fr-FR')
+  };
+}
+
+// Update prorata box live when date changes
+document.addEventListener('DOMContentLoaded', () => {
+  ['simDateEffet', 'simLoyer'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('change', updateProrataPreview);
+    if (el) el.addEventListener('input', updateProrataPreview);
+  });
+});
+
+function updateProrataPreview() {
+  const loyer = parseFloat(document.getElementById('simLoyer')?.value);
+  const dateEffet = document.getElementById('simDateEffet')?.value;
+  const box = document.getElementById('simProrataBox');
+  if (!loyer || !dateEffet || !box) return;
+  const prorata = calcProrata(loyer, dateEffet, currentType);
+  if (prorata) {
+    box.style.display = 'block';
+    document.getElementById('prorataJours').textContent = prorata.joursRestants + ' j';
+    document.getElementById('prorataJoursMois').textContent = prorata.joursDansMois + ' j';
+    document.getElementById('prorataLoyer').textContent = prorata.loyerProrata.toLocaleString('fr-FR', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' €';
+  } else {
+    box.style.display = 'none';
   }
 }
 
