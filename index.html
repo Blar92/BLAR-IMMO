@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BLAR-IMMO — Des biens optimisés, un avenir stabilisé</title>
 <meta name="description" content="BLAR-IMMO, agence immobilière 100% en ligne à Courbevoie. Gestion locative, conseil patrimonial et investissement immobilier en Île-de-France.">
+<link rel="icon" type="image/png" href="https://blar-immo.fr/wp-content/uploads/2026/04/cropped-LOGO-BLAR-IMMO-BLEU.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -1371,29 +1372,60 @@ footer{background:var(--navy-deep);color:#fff;padding:70px 8vw 36px}
 
         <!-- LOYER -->
         <div style="margin-bottom:1.5rem">
-          <div class="sim-lbl" style="margin-bottom:.8rem">2. Loyer actuel</div>
+          <div class="sim-lbl" style="margin-bottom:.8rem">2. Informations du bail</div>
+
+          <!-- Bailleur -->
           <div class="sim-row">
             <div class="sim-grp">
-              <label class="sim-lbl">Montant du loyer hors charges (€)</label>
+              <label class="sim-lbl">Bailleur — Nom ou société *</label>
+              <input type="text" class="sim-input" id="simBailleur" placeholder="Ex : BLAR-IMMO / Baptiste BUISSON / SCI XYZ">
+            </div>
+            <div class="sim-grp">
+              <label class="sim-lbl">Qualité du bailleur</label>
+              <select class="sim-select" id="simQualiteBailleur">
+                <option value="Agence immobilière">Agence immobilière mandataire</option>
+                <option value="Propriétaire">Propriétaire bailleur</option>
+                <option value="Gérant de SCI">Gérant de SCI</option>
+                <option value="Mandataire">Mandataire de gestion</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Locataire -->
+          <div class="sim-row">
+            <div class="sim-grp">
+              <label class="sim-lbl">Civilité du locataire</label>
+              <select class="sim-select" id="simCivilite">
+                <option value="M.">M.</option>
+                <option value="Mme">Mme</option>
+                <option value="M. et Mme">M. et Mme</option>
+                <option value="La société">La société</option>
+              </select>
+            </div>
+            <div class="sim-grp">
+              <label class="sim-lbl">Nom du locataire *</label>
+              <input type="text" class="sim-input" id="simLocataire" placeholder="Ex : Dupont / Dupont-Martin / SARL ABC">
+            </div>
+          </div>
+
+          <div class="sim-row">
+            <div class="sim-grp">
+              <label class="sim-lbl">Adresse du bien loué *</label>
+              <input type="text" class="sim-input" id="simAdresse" placeholder="Ex : 12 rue de la Paix, 75001 Paris">
+            </div>
+            <div class="sim-grp">
+              <label class="sim-lbl">Montant du loyer hors charges (€) *</label>
               <div class="sim-input-prefix">
                 <input type="number" class="sim-input" id="simLoyer" placeholder="Ex : 1 200" min="0" step="0.01">
               </div>
             </div>
-            <div class="sim-grp">
-              <label class="sim-lbl">Nom du locataire (pour le PDF)</label>
-              <input type="text" class="sim-input" id="simLocataire" placeholder="Ex : M. Dupont">
-            </div>
           </div>
+
           <div class="sim-row">
-            <div class="sim-grp">
-              <label class="sim-lbl">Adresse du bien</label>
-              <input type="text" class="sim-input" id="simAdresse" placeholder="Ex : 12 rue de la Paix, 75001 Paris">
-            </div>
             <div class="sim-grp">
               <label class="sim-lbl">📅 Date de signature / prise d'effet du bail</label>
               <input type="date" class="sim-input" id="simDateSignature">
             </div>
-          </div>
           <div class="sim-row">
             <div class="sim-grp">
               <label class="sim-lbl">📅 Date de la dernière révision (ou anniversaire du bail)</label>
@@ -2356,24 +2388,21 @@ function calculate() {
 });
 
 function calculate() {
-  const loyer = parseFloat(document.getElementById('simLoyer').value);
-  const refT = document.getElementById('simRefT').value;
-  const refA = document.getElementById('simRefA').value;
-  const newT = document.getElementById('simNewT').value;
-  const newA = document.getElementById('simNewA').value;
+  const loyer = parseFloat(document.getElementById('simLoyer')?.value);
+  const refSel = document.getElementById('simRefT2');
+  const newSel = document.getElementById('simNewT2');
 
-  if(!loyer || loyer <= 0) {
-    alert('Veuillez saisir un montant de loyer valide.');
-    return;
-  }
+  if(!loyer || loyer <= 0) { alert('Veuillez saisir un montant de loyer valide.'); return; }
+  if(!refSel || !newSel) { alert('Erreur : sélecteurs d\'indices introuvables.'); return; }
 
-  const idxRef = getIdx(currentType, refT, refA);
-  const idxNew = getIdx(currentType, newT, newA);
+  const refKey = refSel.value;
+  const newKey = newSel.value;
+  const [refA, refT] = refKey.split('-');
+  const [newA, newT] = newKey.split('-');
+  const idxRef = INDICES[currentType].data[refKey];
+  const idxNew = INDICES[currentType].data[newKey];
 
-  if(!idxRef || !idxNew) {
-    alert('Indices non disponibles pour cette période. Veuillez sélectionner une autre période.');
-    return;
-  }
+  if(!idxRef || !idxNew) { alert('Indices non disponibles pour cette période.'); return; }
 
   const nouveauLoyer = (loyer * idxNew) / idxRef;
   const diff = nouveauLoyer - loyer;
@@ -2419,167 +2448,157 @@ function downloadPDF() {
   if(!simData.loyer) { alert('Veuillez d\'abord effectuer un calcul.'); return; }
   const d = simData;
   const indice = INDICES[d.type];
+  const civilite = document.getElementById('simCivilite')?.value || 'M.';
   const locataire = document.getElementById('simLocataire').value || 'Non renseigné';
+  const bailleur = document.getElementById('simBailleur')?.value || 'BLAR-IMMO';
+  const qualiteBailleur = document.getElementById('simQualiteBailleur')?.value || 'Agence immobilière mandataire';
   const adresse = document.getElementById('simAdresse').value || 'Non renseignée';
   const dateRev = d.dateEffet || new Date().toLocaleDateString('fr-FR');
   const dateDoc = new Date().toLocaleDateString('fr-FR');
   const dateSignature = d.dateSignature || 'Non renseignée';
   const dateDerniereRev = d.dateDerniereRev || 'Non renseignée';
+  const indice2 = INDICES[d.type];
 
-  const prorataSection = d.prorata ? `
-    <div class="section">
-      <div class="section-title">📐 Calcul au prorata temporis</div>
-      <div style="background:rgba(29,78,216,.05);border:1px solid rgba(29,78,216,.15);border-radius:6px;padding:1.5rem;margin-bottom:1rem">
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-bottom:1rem">
-          <div style="text-align:center">
-            <div style="font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:#1D4ED8;margin-bottom:4px">Date de prise d'effet</div>
-            <div style="font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:700;color:#0B1E3D">${d.prorata.dateEffet}</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:#1D4ED8;margin-bottom:4px">Jours au prorata</div>
-            <div style="font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:700;color:#0B1E3D">${d.prorata.joursRestants} j / ${d.prorata.joursDansMois} j</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:#1D4ED8;margin-bottom:4px">Loyer au prorata</div>
-            <div style="font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:700;color:#1D4ED8">${d.prorata.loyerProrata.toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2})} €</div>
-          </div>
-        </div>
-        <div style="font-size:.82rem;color:#4A5E7A;background:#fff;border:1px solid #E4EAF4;border-radius:4px;padding:.8rem 1rem;line-height:1.7">
-          <strong>Méthode :</strong> ${d.prorata.methode}<br>
-          <strong>Calcul :</strong> ${d.nouveauLoyer.toFixed(2)} € ÷ ${d.prorata.joursDansMois} jours × ${d.prorata.joursRestants} jours = <strong>${d.prorata.loyerProrata.toFixed(2)} €</strong><br>
-          <strong>À partir du 1er du mois suivant :</strong> ${d.nouveauLoyer.toFixed(2)} €/mois (loyer plein)
-        </div>
-      </div>
-    </div>` : '';
+  const formuleAppel = civilite === 'La société' ? 'Madame, Monsieur,' :
+    civilite === 'M. et Mme' ? 'Madame, Monsieur,' :
+    civilite === 'Mme' ? 'Madame,' : 'Monsieur,';
 
+  const formulePolites = civilite === 'La société' ? "Veuillez agréer, Madame, Monsieur, l'expression de nos salutations distinguées." :
+    civilite === 'M. et Mme' ? "Veuillez agréer, Madame, Monsieur, l'expression de nos salutations distinguées." :
+    civilite === 'Mme' ? "Veuillez agréer, Madame, l'expression de nos salutations distinguées." :
+    "Veuillez agréer, Monsieur, l'expression de nos salutations distinguées.";
+
+  const prorataRow = d.prorata ? `
+    <tr style="background:#eef2ff">
+      <td class="label" colspan="2" style="font-weight:600;color:#1D4ED8">
+        📐 Prorata temporis — Prise d'effet le ${d.prorata.dateEffet}<br>
+        <span style="font-weight:400;color:#4A5E7A;font-size:8.5pt">${d.prorata.methode}</span>
+      </td>
+    </tr>
+    <tr>
+      <td class="label">Loyer au prorata (mois partiel — ${d.prorata.joursRestants}j/${d.prorata.joursDansMois}j)</td>
+      <td class="value accent">${d.prorata.loyerProrata.toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2})} €</td>
+    </tr>
+    <tr>
+      <td class="label">Loyer plein à partir du 1er du mois suivant</td>
+      <td class="value">${d.nouveauLoyer.toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2})} €/mois</td>
+    </tr>` : '';
+
+  const prorataBodyText = d.prorata ?
+    `soit <strong>${d.prorata.loyerProrata.toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2})} €</strong> au titre du mois partiel de prise d'effet (${d.prorata.joursRestants} jours sur ${d.prorata.joursDansMois}), puis <strong>${d.nouveauLoyer.toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2})} €</strong> par mois complet à compter du 1er du mois suivant.` :
+    `soit une variation de <strong>${d.diff >= 0 ? '+' : ''}${d.diff.toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2})} €</strong> par rapport au loyer précédent (${d.diff >= 0 ? '+' : ''}${(d.diff*12).toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2})} € sur l'année).`;
 
   const html = `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8">
-  <title>Avis d'indexation de loyer — BLAR-IMMO</title>
+  <title>Avis d'indexation — ${civilite} ${locataire}</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Outfit:wght@300;400;500;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Outfit:wght@300;400;500&display=swap');
     *{margin:0;padding:0;box-sizing:border-box}
-    body{font-family:'Outfit',sans-serif;color:#0B1E3D;background:#fff;padding:0}
-    .header{background:#0B1E3D;padding:32px 48px;display:flex;justify-content:space-between;align-items:center}
-    .header-logo{color:#fff;font-family:'Space Grotesk',sans-serif;font-size:1.6rem;font-weight:800;letter-spacing:-.03em}
-    .header-logo em{color:#3B82F6;font-style:normal}
-    .header-right{text-align:right;color:rgba(255,255,255,.6);font-size:.8rem;line-height:1.6}
-    .header-right strong{color:#fff;display:block;font-size:.9rem}
-    .doc-title{background:#1D4ED8;color:#fff;padding:24px 48px;display:flex;justify-content:space-between;align-items:center}
-    .doc-title h1{font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:800;letter-spacing:-.02em}
-    .doc-title .badge{background:rgba(255,255,255,.15);border-radius:4px;padding:4px 12px;font-size:.75rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
-    .body{padding:40px 48px}
-    .parties{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-bottom:2rem;padding-bottom:2rem;border-bottom:1px solid #E4EAF4}
-    .partie-box{background:#F6F8FC;border-radius:6px;padding:1.2rem 1.5rem}
-    .partie-title{font-size:.7rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:#7B90B5;margin-bottom:.8rem}
-    .partie-name{font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:700;color:#0B1E3D;margin-bottom:.3rem}
-    .partie-detail{font-size:.85rem;color:#4A5E7A;line-height:1.6}
-    .result-box{background:#0B1E3D;border-radius:8px;padding:2rem;margin-bottom:2rem;display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5rem}
-    .res-item{text-align:center}
-    .res-label{font-size:.68rem;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.5);margin-bottom:.4rem}
-    .res-val{font-family:'Space Grotesk',sans-serif;font-size:1.6rem;font-weight:800;color:#fff;letter-spacing:-.04em}
-    .res-val.accent{color:#3B82F6}
-    .res-val.green{color:#4ade80}
-    .section{margin-bottom:1.8rem}
-    .section-title{font-family:'Space Grotesk',sans-serif;font-size:.9rem;font-weight:800;color:#0B1E3D;margin-bottom:.8rem;padding-bottom:.5rem;border-bottom:2px solid #1D4ED8;display:inline-block}
-    .formula-box{background:#F6F8FC;border:1px solid #E4EAF4;border-radius:6px;padding:1.2rem;font-family:monospace;font-size:.85rem;color:#0B1E3D;line-height:1.9;margin-bottom:1rem}
-    table{width:100%;border-collapse:collapse;margin-bottom:1rem}
-    th{background:#F6F8FC;font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#7B90B5;padding:.7rem 1rem;text-align:left}
-    td{padding:.7rem 1rem;border-bottom:1px solid #F0F4F8;font-size:.88rem;color:#4A5E7A}
-    td:last-child{font-weight:500;color:#0B1E3D;text-align:right}
-    .legal-box{background:#F6F8FC;border-left:3px solid #1D4ED8;border-radius:0 6px 6px 0;padding:1.2rem 1.5rem;font-size:.82rem;color:#4A5E7A;line-height:1.7}
-    .footer{background:#F6F8FC;border-top:1px solid #E4EAF4;padding:24px 48px;display:flex;justify-content:space-between;align-items:center;margin-top:2rem}
-    .footer-brand{font-family:'Space Grotesk',sans-serif;font-size:.9rem;font-weight:700;color:#0B1E3D}
-    .footer-brand em{color:#1D4ED8;font-style:normal}
-    .footer-info{font-size:.75rem;color:#7B90B5;text-align:right;line-height:1.6}
-    .note{font-size:.75rem;color:#7B90B5;font-style:italic;margin-top:1rem;padding:1rem;border:1px solid #E4EAF4;border-radius:4px}
-    @media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+    body{font-family:'Outfit',Arial,sans-serif;font-size:11pt;color:#1a1a2e;background:#fff}
+    .page{width:210mm;min-height:297mm;margin:0 auto;padding:18mm 20mm 28mm 20mm;display:flex;flex-direction:column;gap:0}
+    .header-top{text-align:center;margin-bottom:10mm;padding-bottom:5mm;border-bottom:2px solid #0B1E3D}
+    .header-logo{font-family:'Space Grotesk',Arial,sans-serif;font-size:20pt;font-weight:700;color:#0B1E3D;letter-spacing:-.02em}
+    .header-logo em{color:#1D4ED8;font-style:normal}
+    .header-tagline{font-size:8pt;color:#7B90B5;letter-spacing:.15em;text-transform:uppercase;margin-top:3px}
+    .addresses{display:flex;justify-content:space-between;margin-bottom:10mm}
+    .addr-left{width:52%}
+    .addr-right{width:40%;text-align:right}
+    .addr-label{font-size:7.5pt;text-transform:uppercase;letter-spacing:.12em;color:#1D4ED8;margin-bottom:4px;font-weight:600}
+    .addr-name{font-family:'Space Grotesk',Arial,sans-serif;font-size:10.5pt;font-weight:600;color:#0B1E3D;margin-bottom:2px}
+    .addr-detail{font-size:9.5pt;color:#4A5E7A;line-height:1.6}
+    .date-lieu{text-align:right;font-size:9.5pt;color:#4A5E7A;margin-bottom:7mm}
+    .objet{font-size:10.5pt;font-weight:600;color:#0B1E3D;margin-bottom:6mm;padding:7px 12px;border-left:3px solid #1D4ED8;background:#f6f8fc}
+    .body-text{font-size:10pt;color:#2a2a3e;line-height:1.75;margin-bottom:5mm}
+    .data-table{width:100%;border-collapse:collapse;margin:5mm 0;font-size:9.5pt}
+    .data-table th{background:#0B1E3D;color:#fff;padding:7px 11px;text-align:left;font-family:'Space Grotesk',Arial,sans-serif;font-weight:600;font-size:8.5pt;letter-spacing:.05em}
+    .data-table td{padding:6px 11px;border-bottom:1px solid #e4eaf4;color:#2a2a3e}
+    .data-table tr:nth-child(even) td{background:#f9fafc}
+    .data-table td.label{color:#4A5E7A;width:58%}
+    .data-table td.value{font-weight:600;color:#0B1E3D;text-align:right}
+    .data-table td.value.accent{color:#1D4ED8;font-size:10.5pt}
+    .data-table td.value.green{color:#15803d}
+    .politesse{font-size:10pt;color:#2a2a3e;line-height:1.75;margin-top:6mm;margin-bottom:10mm}
+    .signature{margin-bottom:6mm}
+    .sig-name{font-family:'Space Grotesk',Arial,sans-serif;font-size:11pt;font-weight:700;color:#0B1E3D}
+    .sig-title{font-size:9pt;color:#7B90B5;margin-top:2px}
+    .sig-rcpro{font-size:8.5pt;color:#1D4ED8;margin-top:3px}
+    .disclaimer{margin-top:auto;padding-top:5mm;border-top:1px solid #e4eaf4;font-size:7pt;color:#9aabb5;line-height:1.5}
+    .footer{border-top:2px solid #0B1E3D;padding-top:4mm;margin-top:6mm;text-align:center;font-size:8pt;color:#7B90B5;line-height:1.6}
+    .footer strong{color:#0B1E3D;font-family:'Space Grotesk',Arial,sans-serif}
+    .footer em{color:#1D4ED8;font-style:normal}
+    @media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}.page{margin:0;padding:15mm 18mm 22mm 18mm}}
   </style></head><body>
-  <div class="header">
-    <div class="header-logo">BLAR<em>IMMO</em></div>
-    <div class="header-right">
-      <strong>Document officiel d'indexation</strong>
-      Généré le ${dateDoc}<br>
-      blar-immo.fr · baptiste@blar-immo.fr<br>
-      9 bis rue Baliat, 92400 Courbevoie
+  <div class="page">
+    <div class="header-top">
+      <div class="header-logo">BLAR<em>-IMMO</em></div>
+      <div class="header-tagline">Des biens optimisés — Un avenir stabilisé</div>
     </div>
-  </div>
-  <div class="doc-title">
-    <h1>Avis de révision de loyer — ${indice.nom}</h1>
-    <div class="badge">${d.type}</div>
-  </div>
-  <div class="body">
-    <div class="parties">
-      <div class="partie-box">
-        <div class="partie-title">Bailleur / Propriétaire</div>
-        <div class="partie-name">BLAR-IMMO</div>
-        <div class="partie-detail">9 bis rue Baliat, 92400 Courbevoie<br>06 68 27 70 91 · baptiste@blar-immo.fr</div>
+    <div class="addresses">
+      <div class="addr-left">
+        <div class="addr-label">Expéditeur</div>
+        <div class="addr-name">${bailleur}</div>
+        <div class="addr-detail">${qualiteBailleur}<br>9 bis Rue Baliat — 92400 Courbevoie<br>baptiste@blar-immo.fr — 06 68 27 70 91</div>
       </div>
-      <div class="partie-box">
-        <div class="partie-title">Locataire</div>
-        <div class="partie-name">${locataire}</div>
-        <div class="partie-detail">${adresse}<br>
-        Date de signature du bail : ${dateSignature}<br>
-        Dernière révision : ${dateDerniereRev}<br>
-        Date de révision actuelle : ${dateRev}</div>
+      <div class="addr-right">
+        <div class="addr-label">Destinataire</div>
+        <div class="addr-name">${civilite} ${locataire}</div>
+        <div class="addr-detail">${adresse}</div>
       </div>
     </div>
-    <div class="result-box">
-      <div class="res-item">
-        <div class="res-label">Loyer actuel</div>
-        <div class="res-val">${d.loyer.toFixed(2)} €</div>
-      </div>
-      <div class="res-item">
-        <div class="res-label">Nouveau loyer</div>
-        <div class="res-val accent">${d.nouveauLoyer.toFixed(2)} €</div>
-      </div>
-      <div class="res-item">
-        <div class="res-label">Variation</div>
-        <div class="res-val green">${d.diff >= 0 ? '+' : ''}${d.diff.toFixed(2)} €</div>
-      </div>
+    <div class="date-lieu">Courbevoie, le ${dateDoc}</div>
+    <div class="objet">Objet : Révision annuelle du loyer — Indexation ${d.type} ${d.newT} ${d.newA}</div>
+    <div class="body-text">${formuleAppel}</div>
+    <div class="body-text">
+      Conformément aux dispositions de votre contrat de bail en vigueur${dateSignature !== 'Non renseignée' ? ` signé le <strong>${dateSignature}</strong>` : ''}, et en application de la clause d'indexation prévue contractuellement, nous vous informons de la révision annuelle du loyer afférente au bien situé au <strong>${adresse}</strong>.
     </div>
-    <div class="section">
-      <div class="section-title">Méthode de calcul</div>
-      <div class="formula-box">Nouveau loyer = Loyer actuel × (Nouvel indice ${d.type} ÷ Indice ${d.type} de référence)
-Nouveau loyer = ${d.loyer.toFixed(2)} € × (${d.idxNew} ÷ ${d.idxRef})
-Nouveau loyer = ${d.loyer.toFixed(2)} € × ${(d.idxNew/d.idxRef).toFixed(6)}
-Nouveau loyer = ${d.nouveauLoyer.toFixed(2)} €</div>
+    <div class="body-text">
+      Cette révision est calculée sur la base de l'<strong>Indice ${indice2.nom} (${d.type})</strong>, publié trimestriellement par l'INSEE, conformément à la réglementation en vigueur.
     </div>
-    <div class="section">
-      <div class="section-title">Détail des indices ${d.type}</div>
-      <table>
-        <tr><th>Période</th><th>Indice ${d.type}</th><th>Valeur</th></tr>
-        <tr><td>Indice de référence — ${d.refT} ${d.refA}</td><td>${indice.nom}</td><td>${d.idxRef.toLocaleString('fr-FR')}</td></tr>
-        <tr><td>Nouvel indice — ${d.newT} ${d.newA}</td><td>${indice.nom}</td><td>${d.idxNew.toLocaleString('fr-FR')}</td></tr>
-        <tr><td>Variation de l'indice</td><td colspan="1"></td><td>${d.pct >= 0 ? '+' : ''}${d.pct.toFixed(4)}%</td></tr>
-      </table>
+    <table class="data-table">
+      <tr><th colspan="2">Détail de l'indexation</th></tr>
+      <tr><td class="label">Loyer actuel (hors charges)</td><td class="value">${d.loyer.toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2})} €/mois</td></tr>
+      <tr><td class="label">Indice ${d.type} de référence — ${d.refT} ${d.refA}</td><td class="value">${d.idxRef.toLocaleString('fr-FR')}</td></tr>
+      <tr><td class="label">Indice ${d.type} de révision — ${d.newT} ${d.newA}</td><td class="value">${d.idxNew.toLocaleString('fr-FR')}</td></tr>
+      <tr><td class="label">Variation de l'indice</td><td class="value ${d.pct >= 0 ? 'green' : ''}">${d.pct >= 0 ? '+' : ''}${d.pct.toFixed(4)}%</td></tr>
+      <tr><td class="label">Formule appliquée</td><td class="value" style="font-weight:400;font-size:8.5pt">${d.loyer.toFixed(2)} × (${d.idxNew} ÷ ${d.idxRef})</td></tr>
+      <tr style="border-top:2px solid #0B1E3D"><td class="label" style="font-weight:700;color:#0B1E3D">Nouveau loyer mensuel hors charges</td><td class="value accent">${d.nouveauLoyer.toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2})} €/mois</td></tr>
+      <tr><td class="label">Variation mensuelle</td><td class="value ${d.diff >= 0 ? 'green' : ''}">${d.diff >= 0 ? '+' : ''}${d.diff.toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2})} €/mois</td></tr>
+      <tr><td class="label">Variation annuelle</td><td class="value ${d.diff >= 0 ? 'green' : ''}">${d.diff >= 0 ? '+' : ''}${(d.diff*12).toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2})} €/an</td></tr>
+      ${prorataRow}
+    </table>
+    <div class="body-text">
+      En conséquence, à compter du <strong>${dateRev}</strong>, votre loyer mensuel hors charges s'élèvera à <strong>${d.nouveauLoyer.toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2})} €</strong>, ${prorataBodyText}
     </div>
-    <div class="section">
-      <div class="section-title">Récapitulatif financier</div>
-      <table>
-        <tr><th>Élément</th><th>Mensuel</th><th>Annuel</th></tr>
-        <tr><td>Loyer avant révision</td><td>${d.loyer.toFixed(2)} €</td><td>${(d.loyer*12).toFixed(2)} €</td></tr>
-        <tr><td>Nouveau loyer après révision</td><td>${d.nouveauLoyer.toFixed(2)} €</td><td>${(d.nouveauLoyer*12).toFixed(2)} €</td></tr>
-        <tr><td>Différence</td><td>${d.diff >= 0 ? '+' : ''}${d.diff.toFixed(2)} €</td><td>${d.diff >= 0 ? '+' : ''}${(d.diff*12).toFixed(2)} €</td></tr>
-      </table>
+    <div class="body-text">
+      Nous vous remercions de bien vouloir prendre en compte cette révision dans vos prochains règlements et restons à votre disposition pour toute question relative à ce calcul.
     </div>
-    ${prorataSection}
-    <div class="section">
-      <div class="section-title">Base légale</div>
-      <div class="legal-box">${indice.legal}<br><br><strong>Source officielle :</strong> ${indice.source}</div>
+    <div class="politesse">${formulePolites}</div>
+    <div class="signature">
+      <div class="sig-name">${bailleur}</div>
+      <div class="sig-title">${qualiteBailleur} — BLAR-IMMO</div>
+      <div class="sig-rcpro">RC PRO : QRCAI000575</div>
     </div>
-    <div class="note">⚠️ Ce document est généré à titre informatif à partir des indices officiels publiés par l'INSEE. Il ne constitue pas un acte juridique. La révision du loyer doit être notifiée au locataire par lettre recommandée avec accusé de réception. En cas de litige, consultez un professionnel du droit. — BLAR-IMMO, ${dateDoc}</div>
-  </div>
-  <div class="footer">
-    <div class="footer-brand">BLAR<em>IMMO</em> — Des biens optimisés, un avenir stabilisé</div>
-    <div class="footer-info">9 bis rue Baliat, 92400 Courbevoie<br>06 68 27 70 91 · baptiste@blar-immo.fr · blar-immo.fr</div>
+    <div class="disclaimer">
+      ⚠️ Document établi sur la base des indices officiels INSEE. ${dateDerniereRev !== 'Non renseignée' ? `Dernière révision connue : ${dateDerniereRev}.` : ''} La révision du loyer ne peut excéder la variation de l'indice sur 12 mois. Ce courrier doit être adressé au locataire par lettre recommandée avec accusé de réception. En cas de contestation, compétence des tribunaux de Nanterre. — BLAR-IMMO, ${dateDoc}
+    </div>
+    <div class="footer">
+      <strong>BLAR<em>-IMMO</em></strong><br>
+      9 bis Rue Baliat — 92400 Courbevoie — 935 003 335 R.C.S. Nanterre<br>
+      06 68 27 70 91 — baptiste@blar-immo.fr — blar-immo.fr
+    </div>
   </div>
   <script>window.onload=()=>{window.print()}<\/script>
   </body></html>`;
 
   const blob = new Blob([html], {type:'text/html'});
   const url = URL.createObjectURL(blob);
-  const win = window.open(url, '_blank');
-  if(!win) alert('Veuillez autoriser les pop-ups pour télécharger le document.');
+  // Safari compatible: use <a> download instead of window.open
+  const a = document.createElement('a');
+  a.href = url;
+  a.target = '_blank';
+  a.rel = 'noopener';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 1000);
 }
 
 // MINI SIMULATOR (homepage)
