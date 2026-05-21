@@ -2525,7 +2525,7 @@ function downloadPDF() {
     @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Outfit:wght@300;400;500&display=swap');
     *{margin:0;padding:0;box-sizing:border-box}
     body{font-family:'Outfit',Arial,sans-serif;font-size:11pt;color:#1a1a2e;background:#fff}
-    .page{width:210mm;min-height:297mm;margin:0 auto;padding:18mm 20mm 28mm 20mm;display:flex;flex-direction:column;gap:0}
+    .pdf-page{width:210mm;min-height:297mm;margin:0 auto;padding:18mm 20mm 28mm 20mm;display:flex;flex-direction:column;gap:0}
     .header-top{text-align:center;margin-bottom:10mm;padding-bottom:5mm;border-bottom:2px solid #0B1E3D}
     .header-logo{font-family:'Space Grotesk',Arial,sans-serif;font-size:20pt;font-weight:700;color:#0B1E3D;letter-spacing:-.02em}
     .header-logo em{color:#1D4ED8;font-style:normal}
@@ -2556,9 +2556,9 @@ function downloadPDF() {
     .footer{border-top:2px solid #0B1E3D;padding-top:4mm;margin-top:6mm;text-align:center;font-size:8pt;color:#7B90B5;line-height:1.6}
     .footer strong{color:#0B1E3D;font-family:'Space Grotesk',Arial,sans-serif}
     .footer em{color:#1D4ED8;font-style:normal}
-    @media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}.page{margin:0;padding:15mm 18mm 22mm 18mm}}
+    @media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}.pdf-page{margin:0;padding:15mm 18mm 22mm 18mm}}
   </style></head><body>
-  <div class="page">
+  <div class="pdf-page">
     <div class="header-top">
       <div class="header-logo">BLAR<em>-IMMO</em></div>
       <div class="header-tagline">Des biens optimisés — Un avenir stabilisé</div>
@@ -2693,11 +2693,29 @@ function calcProrata(nouveauLoyer, dateEffetStr, typeBail) {
 
 // Update prorata box live when date changes
 document.addEventListener('DOMContentLoaded', () => {
+  // Init simulator selects safely
+  try {
+    buildPeriodSelects();
+  } catch(e) { console.warn('buildPeriodSelects:', e); }
+
+  // Set today's date
+  try {
+    const today = new Date().toISOString().split('T')[0];
+    const dateEl = document.getElementById('simDate');
+    if(dateEl) dateEl.value = today;
+  } catch(e) {}
+
+  // Init prorata listeners
   ['simDateEffet', 'simLoyer'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.addEventListener('change', updateProrataPreview);
-    if (el) el.addEventListener('input', updateProrataPreview);
+    try {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('change', updateProrataPreview);
+      if (el) el.addEventListener('input', updateProrataPreview);
+    } catch(e) {}
   });
+
+  // Init reveal
+  initReveal();
 });
 
 function updateProrataPreview() {
@@ -2726,12 +2744,7 @@ function onRefChange() {
 }
 
 // Init index display on simulator page load
-document.addEventListener('DOMContentLoaded', () => {
-  buildPeriodSelects();
-  const today = new Date().toISOString().split('T')[0];
-  const dateEl = document.getElementById('simDate');
-  if(dateEl) dateEl.value = today;
-});
+
 const form = document.getElementById('contact-form');
 if(form){
   form.addEventListener('submit', async function(e){
